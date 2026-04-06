@@ -1,0 +1,73 @@
+project_name: "YieldField"
+project_type: "web-app"
+project_level: 2
+initialized_at: "2026-04-06T19:00:00Z"
+bmad_version: "v6"
+
+phases:
+  phase_1_discovery:
+    name: "Discovery & Ideation"
+    status: "not_started"
+    workflows:
+      product_brief:
+        status: "recommended"
+        artifact: null
+        completed_at: null
+      brainstorm:
+        status: "optional"
+        artifact: null
+        completed_at: null
+      research:
+        status: "optional"
+        artifact: null
+        completed_at: null
+
+  phase_2_definition:
+    name: "Product Definition"
+    status: "not_started"
+    workflows:
+      prd:
+        status: "required"
+        artifact: null
+        completed_at: null
+      tech_spec:
+        status: "optional"
+        artifact: null
+        completed_at: null
+
+  phase_3_architecture:
+    name: "Architecture & Design"
+    status: "not_started"
+    workflows:
+      architecture:
+        status: "required"
+        artifact: null
+        completed_at: null
+      ux_design:
+        status: "optional"
+        artifact: null
+        completed_at: null
+      solutioning_gate_check:
+        status: "required"
+        artifact: null
+        completed_at: null
+
+  phase_4_implementation:
+    name: "Implementation"
+    status: "not_started"
+    workflows:
+      sprint_planning:
+        status: "required"
+        artifact: null
+        completed_at: null
+      create_story:
+        status: "required"
+        artifact: null
+        completed_at: null
+      dev_story:
+        status: "required"
+        artifact: null
+        completed_at: null
+
+current_phase: "phase_1_discovery"
+next_recommended_workflow: "product-brief"
