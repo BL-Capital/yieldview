@@ -3,7 +3,7 @@
 # Updated manually as stories progress
 
 generated: 2026-04-11
-last_updated: 2026-04-11
+last_updated: 2026-04-11  # Split Sprint 2 → 2a/2b + add Story 3.14 Marquee FR27 + fix counts
 project: YieldField
 project_key: YFIELD
 tracking_system: file-system
@@ -16,8 +16,8 @@ team:
   capacity_per_sprint_avg: 15
 
 project_level: 3
-total_stories: 57
-total_points: 142
+total_stories: 69
+total_points: 173
 
 development_status:
   # Epic 1 — Foundation & Tooling (Sprint 1)
@@ -31,8 +31,9 @@ development_status:
   1-7-github-actions-workflow-structure: backlog
   epic-1-retrospective: optional
 
-  # Epic 2 — Data Pipeline Backend (Sprint 2)
+  # Epic 2 — Data Pipeline Backend (splitté Sprint 2a + Sprint 2b)
   epic-2: backlog
+  # Sprint 2a — Data ingestion & alerts (20 pts)
   2-1-schemas-zod: backlog
   2-2-client-finnhub: backlog
   2-3-client-fred: backlog
@@ -40,6 +41,7 @@ development_status:
   2-5-script-fetch-data-fallback: backlog
   2-6-bootstrap-vix-history: backlog
   2-7-script-compute-alert-vix-percentile: backlog
+  # Sprint 2b — AI generation & publishing (19 pts)
   2-8-client-claude-api: backlog
   2-9-prompt-v01-chartiste-lettre: backlog
   2-10-script-generate-ai: backlog
@@ -64,6 +66,7 @@ development_status:
   3-11-magic-ui-ripple-freshness: backlog
   3-12-content-client-r2-ssr: backlog
   3-13-herosection-page: backlog
+  3-14-business-secondary-kpis-marquee: backlog
   epic-3-retrospective: optional
 
   # Epic 4 — Rive & Coulisses (Sprint 4)
@@ -124,44 +127,51 @@ sprints:
     points_committed: 18
     points_completed: 0
     status: "not_started"
-  - sprint_number: 2
+  - sprint_number: "2a"
     start_date: "S1 + 7j"
-    end_date: "S2 + 14j"
-    goal: "Data Pipeline Backend : pipeline nocturne complet opérationnel (fetch + AI + R2)"
-    points_committed: 32
+    end_date: "S1 + 14j"
+    goal: "Data Pipeline Part 1 : schemas + clients API + fetch orchestré + bootstrap VIX + compute alert"
+    points_committed: 20
+    points_completed: 0
+    status: "not_started"
+  - sprint_number: "2b"
+    start_date: "S1 + 14j"
+    end_date: "S1 + 21j"
+    goal: "Data Pipeline Part 2 : Claude API + generate-ai bilingue + publication R2 + GitHub Actions + logs"
+    points_committed: 19
     points_completed: 0
     status: "not_started"
   - sprint_number: 3
-    start_date: "S2 + 14j"
-    end_date: "S3 + 21j"
-    goal: "Core UI Dashboard : hero homepage avec Aurora + SVG avatar + Bento KPIs"
-    points_committed: 34
+    start_date: "S1 + 21j"
+    end_date: "S1 + 28j"
+    goal: "Core UI Dashboard : hero homepage avec Aurora + SVG avatar + Bento KPIs + Marquee secondaire"
+    points_committed: 36
     points_completed: 0
     status: "not_started"
   - sprint_number: 4
-    start_date: "S3 + 21j"
-    end_date: "S4 + 28j"
+    start_date: "S1 + 28j"
+    end_date: "S1 + 35j"
     goal: "Rive Avatar & Coulisses : page Coulisses complète + Lottie icons"
     points_committed: 23  # P0 only, +5 P1 optional
     points_completed: 0
     status: "not_started"
   - sprint_number: 5
-    start_date: "S4 + 28j"
-    end_date: "S5 + 35j"
+    start_date: "S1 + 35j"
+    end_date: "S1 + 42j"
     goal: "Alerts & Distribution : AlertBanner crisis + Newsletter + OG dynamic + RSS"
-    points_committed: 24
+    points_committed: 26
     points_completed: 0
     status: "not_started"
   - sprint_number: 6
-    start_date: "S5 + 35j"
-    end_date: "S6 + 42j"
+    start_date: "S1 + 42j"
+    end_date: "S1 + 56j"  # 2 semaines stabilisation
     goal: "Stabilisation : Lighthouse ≥90 + Accessibility + Bundle optimized + e2e tests"
     points_committed: 16
     points_completed: 0
     status: "not_started"
   - sprint_number: 7
-    start_date: "S6 + 42j"
-    end_date: "S7 + 49j"
+    start_date: "S1 + 56j"
+    end_date: "S1 + 63j"
     goal: "Launch : domaine + juridique + soft launch + hard launch + interviews Marc"
     points_committed: 10
     points_completed: 0
@@ -169,7 +179,8 @@ sprints:
 
 velocity:
   sprint_1: null
-  sprint_2: null
+  sprint_2a: null
+  sprint_2b: null
   sprint_3: null
   sprint_4: null
   sprint_5: null
@@ -180,8 +191,11 @@ velocity:
 notes:
   - "P0 = critical for MVP, must be in the sprint"
   - "P1 = important but can be deferred to V1.1 if timeline pressure"
-  - "Sprint 2 is dense (32 points) but mostly parallelizable scripting tasks"
-  - "Sprint 3 and 4 can overlap partially (Epic 5 stories are independent)"
-  - "Sprint 7 story 7.3 (soft launch) starts during Sprint 6"
-  - "Bryan is Epic 7 owner; he leads GTM while Emmanuel finishes stabilisation"
+  - "Sprint 2 was splitté en 2a (20 pts, ingestion) + 2b (19 pts, AI/publishing) — timeline totale +1 semaine"
+  - "Sprint 3 reste dense (36 pts avec Story 3.14 Marquee FR27) — scope de repli : 3.7 Glare Card + 3.11 Ripple reportables"
+  - "Sprint 5 = 26 pts après recomptage correct"
+  - "Sprint 3 et 4 peuvent se chevaucher partiellement (stories Epic 5 indépendantes OG/RSS)"
+  - "Sprint 7 story 7.3 (soft launch) démarre pendant Sprint 6"
+  - "Bryan est Epic 7 owner ; il lead le GTM pendant qu'Emmanuel finit la stabilisation"
   - "Update this file at end of each sprint with velocity and story status"
+  - "Hard launch public : semaine 9 (au lieu de 8, décalé d'1 semaine après split Sprint 2)"
