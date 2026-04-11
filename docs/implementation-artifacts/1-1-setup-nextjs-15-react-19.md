@@ -1,6 +1,6 @@
 # Story 1.1 : Setup Next.js 15 + React 19 + TypeScript
 
-Status: review
+Status: done
 Epic: 1 — Foundation & Tooling Setup
 Sprint: 1 (semaine 1)
 Points: 3
@@ -24,10 +24,10 @@ Author: Scrum Master (BMAD v6.3.0 `bmad-create-story`)
 
 **AC1 — Next.js 15 + React 19 initialisés**
 - [x] `package.json` présent au root du repo avec `"next": "^15.0.0"`, `"react": "^19.0.0"`, `"react-dom": "^19.0.0"`
-- [x] `tsconfig.json` généré avec `"strict": true` et `"baseUrl": "."` + `"paths": { "@/*": ["./src/*"] }`
+- [x] `tsconfig.json` généré avec `"strict": true` et `"paths": { "@/*": ["./src/*"] }` (pas de `baseUrl` — redondant avec `moduleResolution: bundler` en TS 5, cf. Review D1 résolu)
 - [x] Dossier `src/` créé avec structure `src/app/` (App Router)
 - [x] `src/app/layout.tsx` et `src/app/page.tsx` par défaut générés par `create-next-app`
-- [x] `tailwind.config.ts` + `postcss.config.mjs` + `src/app/globals.css` générés (base, sans tokens YieldField — ça c'est Story 1.2)
+- [x] `postcss.config.mjs` + `src/app/globals.css` générés — pattern **Tailwind 4 CSS-based** via `@theme` inline (pas de `tailwind.config.ts`, cf. Review D2 résolu)
 - [x] `.eslintrc.json` ou `eslint.config.mjs` avec config Next par défaut
 
 **AC2 — Package manager pnpm fonctionnel**
@@ -201,8 +201,8 @@ yieldview/                         [repo root]
 ├── pnpm-lock.yaml                 [NOUVEAU Story 1.1]
 ├── postcss.config.mjs             [NOUVEAU Story 1.1]
 ├── README.md                      [existant, NE PAS TOUCHER - pas écraser]
-├── tailwind.config.ts             [NOUVEAU Story 1.1 — contenu default, Story 1.2 l'enrichira]
 └── tsconfig.json                  [NOUVEAU Story 1.1]
+                                   [NOTE: PAS de tailwind.config.ts — Tailwind 4 utilise @theme CSS inline, cf. Review D2]
 ```
 
 ### Pièges connus & anti-patterns à éviter
@@ -348,7 +348,7 @@ Pas applicable pour Story 1.1 (page Next.js template). Les gates Lighthouse (≥
 **Créés (16 fichiers) :**
 - `package.json` — `yieldfield`, Next 15.5.15, React 19.1.0, TS 5.x, Tailwind 4, ESLint 9, scripts `dev`/`build`/`lint`/`typecheck`/`start`
 - `pnpm-lock.yaml` — lockfile généré, 3757 lignes
-- `tsconfig.json` — strict true, `@/*` alias, baseUrl `.`
+- `tsconfig.json` — strict true, `@/*` alias (pas de `baseUrl` — cf. Review D1 résolu)
 - `next.config.ts` — config Next TypeScript (vs architecture.md qui prévoyait `.mjs`, mais le template actuel génère `.ts`)
 - `postcss.config.mjs` — plugin `@tailwindcss/postcss`
 - `eslint.config.mjs` — config Next + @eslint/eslintrc
@@ -374,3 +374,31 @@ Pas applicable pour Story 1.1 (page Next.js template). Les gates Lighthouse (≥
 | Date | Version | Change | Author |
 |---|---|---|---|
 | 2026-04-11 | 0.1.0 | Story 1.1 exécutée : init Next 15.5.15 + React 19.1.0 + TS 5.9.3 strict + Tailwind 4.2.2. Tous smoke tests verts. Déviations documentées (Tailwind 4 vs 3.4, pnpm vs npm). | claude-opus-4-6[1m] via bmad-dev-story |
+| 2026-04-11 | 0.1.1 | Code review Sonnet 4.6 : 2 decisions résolues (baseUrl A, Tailwind 4 A), 2 patches appliqués (`lint: eslint .`, `build: next build`), 6 items deferred. Status → `done`. | claude-sonnet-4-6 via bmad-code-review |
+
+---
+
+## Review Findings
+
+Code review exécuté le 2026-04-11 par `bmad-code-review` (claude-sonnet-4-6). 3 layers : Blind Hunter + Edge Case Hunter + Acceptance Auditor. 11 dismissed (faux positifs).
+
+### Decision Needed
+
+- [x] [Review][Decision] **Conflit AC1 vs Dev Notes — `"baseUrl": "."` dans tsconfig** — **RÉSOLU (Emmanuel, 2026-04-11)** : Option A retenue. `baseUrl` redondant avec `moduleResolution: bundler` en TS 5. AC1 corrigé (ligne 27) + File List corrigée.
+
+- [x] [Review][Decision] **Conflit AC1 vs Tailwind 4 — `tailwind.config.ts` absent** — **RÉSOLU (Emmanuel, 2026-04-11)** : Option A retenue. Tailwind 4 accepté définitivement. AC1 corrigé (ligne 30) + Structure Notes corrigée. Story 1.2 à re-spécer en pattern `@theme` CSS inline. Architecture.md à mettre à jour en v1.3.
+
+### Patch
+
+- [x] [Review][Patch] **`"lint": "eslint"` sans path — ESLint 9 peut ne rien linter** [`package.json:9`] — **FIXED (2026-04-11)** : changé en `"lint": "eslint ."`. Smoke test `pnpm run lint` : clean, exit 0.
+
+- [x] [Review][Patch] **`--turbopack` sur le script `build` — risque CI** [`package.json:8`] — **FIXED (2026-04-11)** : changé en `"build": "next build"` (webpack stable). Smoke test `pnpm run build` : compile 6.9s, 5 routes statiques, First Load 108 kB (meilleur que 119 kB avec Turbopack).
+
+### Defer
+
+- [x] [Review][Defer] **`html lang="en"` hardcodé** [`src/app/layout.tsx:26`] — deferred, sera géré par next-intl dans Story 1.4 (multi-langue FR/EN avec lang dynamique)
+- [x] [Review][Defer] **Metadata boilerplate "Create Next App"** [`src/app/layout.tsx:15-18`] — deferred, page template à remplacer en Story 3.13 (HeroSection)
+- [x] [Review][Defer] **`font-family: Arial` en body écrase `@theme inline`** [`src/app/globals.css:24`] — deferred, globals.css sera réécrit en Story 1.2 (design tokens)
+- [x] [Review][Defer] **`@types/node ^20` sans `@cloudflare/workers-types`** [`package.json:18`] — deferred, setup Cloudflare runtime types prévu lors du déploiement (Epic 7)
+- [x] [Review][Defer] **`next.config.ts` vide — stratégie déploiement Cloudflare non définie** [`next.config.ts:3`] — deferred, output strategy (static export ou @cloudflare/next-on-pages) à configurer en Epic 7
+- [x] [Review][Defer] **`next/font/google` réseau requis au build** [`src/app/layout.tsx:2`] — deferred, risque acceptable en dev local; les polices sont cachées par Next.js, à valider sur Cloudflare Pages CI
