@@ -3,7 +3,7 @@
 # Updated manually as stories progress
 
 generated: 2026-04-11
-last_updated: 2026-04-11  # Split Sprint 2 → 2a/2b + add Story 3.14 Marquee FR27 + fix counts
+last_updated: 2026-04-11  # Story 1.1 ready-for-dev + epic-1 in-progress
 project: YieldField
 project_key: YFIELD
 tracking_system: file-system
@@ -21,8 +21,8 @@ total_points: 173
 
 development_status:
   # Epic 1 — Foundation & Tooling (Sprint 1)
-  epic-1: backlog
-  1-1-setup-nextjs-15-react-19: backlog
+  epic-1: in-progress
+  1-1-setup-nextjs-15-react-19: in-progress
   1-2-design-tokens-tailwind-fonts: backlog
   1-3-shadcn-ui-base-components: backlog
   1-4-next-intl-bilingue-setup: backlog
