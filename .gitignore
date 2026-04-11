@@ -145,3 +145,11 @@ vite.config.ts.timestamp-*
 # Keep _bmad/ versioned (project config) but ignore runtime state
 _bmad/*/cache/
 _bmad/*/state/
+
+# Next.js / Story 1.1 additions
+next-env.d.ts
+/build
+.vercel
+.DS_Store
+*.pem
+.pnpm-debug.log*
