@@ -137,3 +137,11 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# BMAD Method v6.3.0 local installation
+# Skills are installed per-project via `bmad install`, not versioned
+.claude/skills/
+.claude/commands/
+# Keep _bmad/ versioned (project config) but ignore runtime state
+_bmad/*/cache/
+_bmad/*/state/
