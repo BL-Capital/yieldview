@@ -1,223 +1,152 @@
-# 🎯 NEXT SESSION — YieldField reprise pour Phase 2 (Implementation)
+# 🎯 NEXT SESSION — YieldField reprise Sprint 1 (Stories 1.3 → 1.7)
 
-**Date de cette session :** 2026-04-11
-**Modèle utilisé :** Claude Opus 4.6 (1M context)
-**Phase BMAD en cours :** Phase 3 Solutioning CLÔTURÉE, Phase 4 Implementation PRÊTE
-
----
-
-## ⚡ TL;DR pour la reprise rapide
-
-- **Tout est committé et mergé** sur `emmanuel` + `dev`
-- **9 livrables BMAD v6.3.0** dans `docs/planning-artifacts/` (~5 700 lignes)
-- **Readiness check : GO 87/100** avec 5 gaps mineurs à corriger avant/pendant Sprint 1
-- **2 GitHub issues en attente de Bryan** (#2 domaine, #3 validation globale) — **NE PAS LE RELANCER**
-- **Prochaine étape :** corriger les 3 gaps priorité haute, puis démarrer Sprint 1 avec `bmad-create-story`
+**Date session précédente :** 2026-04-12
+**Modèles utilisés :** Opus 4.6 (1M context)
+**Phase BMAD :** Phase 4 Implementation — **Sprint 1 en cours (2/7 stories done)**
 
 ---
 
-## 📁 État du repo YieldField
+## ⚡ TL;DR (30 secondes)
 
-**Working directory :** `C:\00- ANTIGRAVITY PROJECTS\19- YIELDFIELD BRYAN`
-
-**Branches :**
-- `emmanuel` @ `3ee0397` (branche de travail)
-- `dev` @ `0088dff` (merge --no-ff de emmanuel)
-- Synchronisation avec `origin` : ✅ à jour
-
-**Git remote :** `https://github.com/BL-Capital/yieldview`
-
-**Fichiers dans `docs/planning-artifacts/` :**
-```
-product-brief-yieldfield.md                      (Phase 1, 433 lignes)
-prd.md                                           (Phase 2, 670 lignes)
-architecture.md                                  (Phase 3, 1060 lignes)
-ux-design-specification.md                       (Phase 3, 1533 lignes)
-component-catalog.md                             (Phase 3 bible, 497 lignes)
-epics.md                                         (Phase 3-4, 686 lignes)
-sprint-plan.md                                   (Phase 4, 416 lignes)
-sprint-status.yaml                               (Phase 4, live tracker)
-implementation-readiness-report-2026-04-11.md    (Gate check, 377 lignes)
-```
-
-**Workflow status :** `docs/bmm-workflow-status.yaml` (à jour au 11-04-2026 23:00)
+- **Story 1.1** done (commit `ecdb6df`, review passée)
+- **Story 1.2** review (commit `129cd39`, design tokens Tailwind 4 @theme + fonts self-hosted, quality gates verts, First Load JS 102 kB)
+- **7 maquettes Stitch** générées + ticket Bryan `BL-Capital/yieldview#4` ouvert
+- **8 commits locaux** sur `emmanuel` en attente push
+- **Nouveau workflow décidé** : dev batch de toutes les stories du sprint, puis review groupée en fin de sprint (cf. memory `sprint_workflow.md`)
+- **Stratégie sécurité décidée** : skill custom `bmad-security-review` à créer en Sprint 2a, premier run en fin Sprint 2b (cf. memory `security_strategy.md`)
 
 ---
 
-## 🎓 Méthodologie BMAD v6.3.0 — rappel
+## 📋 Ce qui a été fait session 2026-04-12
 
-- **Installation :** v6.3.0 officielle via `node tools/installer/bmad-cli.js install` depuis `~/.bmad-tools/BMAD-METHOD/`
-- **41 skills actives** dans `.claude/skills/bmad-*/` (per-project, pas versionnées dans git — voir `.gitignore`)
-- **Config projet :** `_bmad/bmm/config.yaml`
-- **Mode d'exécution préféré :** **hybride** — lire les step files officiels, produire les documents en une passe cohérente, mais **s'arrêter pour AskUserQuestion** aux 3-5 moments critiques (pas 15 allers-retours)
-- **Documents signés par persona :** Mary (analyst), John (PM), Winston (architect), Sally (UX), Scrum Master, Amelia (dev)
+### 1. Maquettes Stitch (Sally UX)
 
-**v6.0 backups** : `~/_bmad-archives/v6.0-backups/` (hors scan path du harness)
+- Projet Stitch créé : `YieldField — Mockups v1` → https://stitch.withgoogle.com/projects/9668374120836169449
+- Design system appliqué : *"YieldField — Éditorial signé"* (Direction C), palette yield-dark + yield-gold, fonts Newsreader (stand-in) + Inter
+- **7 écrans générés** :
+  1. Hero Section (Aurora + avatar + briefing + Bento KPIs)
+  2. Bento KPIs détaillé (8 indicateurs, 4×3 asymétrique)
+  3. Coulisses (Tracing Beam + prompt v12 code block)
+  4. Crisis mode (Alert Banner + Meteors + VIX neon)
+  5. Avatar Rive states (4 poses + 3 citations)
+  6. Briefing éditorial (article view long-form 720px)
+  7. Newsletter subscription (form soft-capture AAA)
+- **Ticket Bryan** `BL-Capital/yieldview#4` : review visuelle demandée dans 48-72 h, 6 questions ciblées, warning login Google
 
----
+### 2. Story 1.2 dev (Amelia)
 
-## 🚨 5 GAPS à traiter avant/pendant Sprint 1
+- **Status :** `ready-for-dev` → `in-progress` → `review`
+- **Commit :** `129cd39 feat(story-1.2): add YieldField design tokens (@theme) + self-hosted fonts`
+- **Fichiers créés :**
+  - `src/app/fonts/InstrumentSerif-Regular.ttf` (70 KB)
+  - `src/app/fonts/InstrumentSerif-Italic.ttf` (71 KB)
+  - `src/app/fonts/InterVariable.woff2` (344 KB)
+  - `src/app/fonts/JetBrainsMono-Variable.woff2` (111 KB)
+- **Fichiers modifiés :** `layout.tsx` (next/font/local × 3 + lang fr + metadata YieldField), `globals.css` (bloc @theme complet, 17 couleurs, 12 font sizes, 5 shadows, 6 durées, 3 easings), `page.tsx` (smoke test minimal font-serif gold + body Inter + number bull)
+- **Quality gates :** lint ✓, typecheck ✓, build ✓ (First Load JS 102 kB, mieux que 108 kB Story 1.1)
+- **3 findings deferred Story 1.1 résolus :** lang fr, metadata YieldField, Arial body supprimé
+- **Déviation mineure :** Instrument Serif en TTF (pas de WOFF2 direct dispo) — documenté en Dev Agent Record
 
-D'après le rapport de readiness (`implementation-readiness-report-2026-04-11.md`) :
+### 3. Décisions stratégiques enregistrées en memory
 
-### Priorité HAUTE (à corriger avant Sprint 1 — 5-10 min)
-
-**Gap #1 — FR27 Marquee sans story dédiée** (MINEUR)
-- Ajouter **Story 3.14 — Business: `<SecondaryKpisMarquee>`** dans `epics.md` Epic 3
-- 2 points
-- Acceptance : intégration du composant Magic UI Marquee dans `<HeroSection>` avec les KPIs secondaires
-
-**Gap #3 — Erreurs de comptage** (MINEUR)
-Corriger les chiffres dans `epics.md` header et `sprint-plan.md` header :
-- `epics.md` en-tête : **"28 stories"** → **68 stories**
-- `epics.md` en-tête : **"142 points"** → **171 points**
-- `epics.md` Epic 2 total : **"32 points"** → **39 points**
-- `epics.md` Epic 5 total : **"24 points"** → **26 points**
-- `sprint-plan.md` header : **"57 stories"** → **68 stories**
-- `sprint-plan.md` header : **"142 points"** → **171 points**
-
-**Gap #4 — Sprint 2 densité (39 pts réels vs capacity 15-20)** (MAJEUR)
-Décision à prendre :
-- **Option A** : Réduire scope (retirer Story 2.4 Alpha Vantage P1, -1 point)
-- **Option B** : Splitter en Sprint 2a (19 pts) + Sprint 2b (20 pts)
-- **Option C** : Accepter le risque avec scope de repli explicite documenté
-- **À arbitrer avec Emmanuel lors de la reprise**
-
-### Priorité MOYENNE (optionnel)
-
-**Gap #2 — Annexe UX "Experience Maximum" 3 capacités non couvertes par FRs** (MINEUR)
-- Avatar mouse tracking, wink click, page transition Home→Coulisses dramatique
-- **Option A** : ajouter FR55, FR56, FR57 au PRD avec stories P2
-- **Option B** : accepter en bonus Epic 4 sans formalisation
-- Non bloquant, amplificateurs uniquement
-
-### NOTE (acceptable)
-
-**Gap #5 — Epic 1 + Epic 6 sont techniques purs**
-- Acceptable pour Level 3, garder tel quel
+- **`sprint_workflow.md`** : nouveau rythme dev batch → review groupée fin de sprint (à partir de Sprint 2, Sprint 1 reste en mode review classique)
+- **`security_strategy.md`** : skill custom `bmad-security-review` à créer Sprint 2a, premier run Sprint 2b, refus explicite des skills security GitHub tiers non audités
 
 ---
 
-## 📋 GitHub Issues status
-
-| # | Titre | Assigné | Statut |
-|---|---|---|---|
-| #1 | PRD v1.0 review | Bryan | ✅ Traité (recommandations intégrées) |
-| #2 | **Nom de domaine final** | Bryan | ⚠️ **EN ATTENTE** (bloque Story 7.1) |
-| #3 | **BMAD v6.3.0 validation globale** | Bryan | ⚠️ **EN ATTENTE** (créée 11-04-2026) |
-
-**⚠️ IMPORTANT :** Emmanuel a demandé explicitement de **NE PAS relancer Bryan** sur les issues #2 et #3. Attendre qu'il réponde de lui-même.
-
----
-
-## 🚀 Prochaines étapes concrètes pour la Phase 4
-
-### Session de reprise — ordre d'action recommandé
-
-1. **Lire ce fichier NEXT_SESSION.md** (2 min)
-2. **Vérifier l'état du repo** : `git status`, `git log -5`, ouvrir `docs/bmm-workflow-status.yaml`
-3. **Demander à Emmanuel s'il a eu des retours de Bryan** (issues #2, #3)
-4. **Arbitrer le Gap #4** (Sprint 2 density) avec Emmanuel via AskUserQuestion
-5. **Corriger Gap #1** : ajouter Story 3.14 Marquee dans `epics.md`
-6. **Corriger Gap #3** : fixer les 6 chiffres dans `epics.md` et `sprint-plan.md`
-7. **Commit + merge** des corrections
-8. **Lancer Sprint 1** :
-   - Invoquer `Skill(skill="bmad-create-story")` pour Story 1.1 — Setup Next.js 15 + React 19 + TypeScript
-   - OU lire manuellement `.claude/skills/bmad-create-story/SKILL.md` et workflow
-   - Créer le fichier `docs/planning-artifacts/stories/1.1-setup-nextjs-15.md`
-9. **Implémenter Story 1.1** :
-   - `npx create-next-app@latest` avec les bons flags
-   - Smoke test React 19
-   - Commit initial sur une nouvelle branche `feature/1.1-setup-nextjs` mergée dans `emmanuel`
-10. **Update sprint-status.yaml** : `1-1-setup-nextjs-15-react-19: done`, start sprint 1
-11. **Loop** : `bmad-create-story` 1.2 → `bmad-dev-story` → merge → next
-
-### Pattern quotidien Phase 4
+## 🧭 Commits locaux en attente push sur `origin emmanuel`
 
 ```
-create-story → review with Emmanuel → dev-story → commit → merge emmanuel→dev
-→ update sprint-status → code-review (bmad-code-review) → next story
+129cd39  feat(story-1.2): add YieldField design tokens (@theme) + self-hosted fonts
+7b446f8  chore(story-1.2): create story spec — Tailwind 4 @theme + self-hosted fonts
+1599bf5  docs(architecture): v2.1 — freeze versions post-Story 1.1
+78935c0  chore(story-1.1): code review Sonnet 4.6 — status done
+0a08051  chore(story-1.1): mark review, update Dev Agent Record with deviations
+ecdb6df  Merge Story 1.1: Setup Next.js 15 + React 19 + TypeScript
+6b71eeb  feat(story-1.1): init Next.js 15 + React 19 + TypeScript strict
+cdd0ba8  chore(story-1.1): create story spec and mark in-progress
 ```
 
-### Rituels BMAD v6.3.0
-
-- **En fin de chaque epic** : `bmad-retrospective` (optionnel mais recommandé pour Epic 1 et Epic 6 qui sont techniques)
-- **Checkpoint preview** : `bmad-checkpoint-preview` avant les merges critiques
-- **Correct course** : `bmad-correct-course` si dérapage significatif d'un sprint
+**Commande push quand prêt :** `git push origin emmanuel`
 
 ---
 
-## 💡 Rappels importants sur YieldField
+## 🎯 Reprise session suivante — 5 stories restantes Sprint 1
 
-### Décisions non négociables
+**Validation visuelle Story 1.2 avant tout :** lancer `pnpm run dev` sur `localhost:3000` et vérifier que :
+- Fond bleu nuit (#0A1628)
+- Titre "YieldField" en Instrument Serif doré (#C9A84C)
+- Sous-titre body Inter en ivoire
+- Chiffre "+2,47%" en JetBrains Mono vert bull (#22C55E)
 
-- **Bilingue FR/EN** dès J1 (non optionnel)
-- **Budget ≤ 8€/mois** (Cloudflare free tier + Claude API + domaine)
-- **Aucune clé API dans le code** (pre-commit hook + GitHub secret scanning)
-- **Level 3 BMAD** (Complex, 57+ stories)
-- **Timeline 6+2 semaines** (pas 4 optimistes)
-- **AMF compliance** : formulations descriptives, pas prescriptives
+Si ça rend bien → feu vert pour enchaîner les 5 stories restantes.
 
-### Stack verrouillé (Architecture v2)
+### Ordre d'exécution Stories restantes
 
-- Next.js 15 + React 19 + TypeScript strict
-- Motion 12 + Motion+ (abonné)
-- Aceternity UI Pro (abonné) + Magic UI (open source)
-- Rive (avatar hero) + Lottie (micro-animations)
-- Cloudflare Pages + R2 + Workers (100% free tier)
-- Claude API : Opus (FR) + Haiku (EN)
-- next-intl + Zustand + Zod
+1. **Story 1.3** — shadcn/ui base components (Button, Card, Dialog, DropdownMenu, Tooltip, Toast, Form, Input, Sheet, Accordion)
+2. **Story 1.4** — next-intl bilingue setup (`/fr/` `/en/`, messages JSON, middleware routing)
+3. **Story 1.5** — Layout Header + Footer + LanguageSwitcher (consomme 1.3 + 1.4)
+4. **Story 1.6** — Pre-commit hook secrets (durcir l'existant)
+5. **Story 1.7** — GitHub Actions workflow structure (skeleton pour Sprint 2)
 
-**Confirmé explicitement :** PAS de Supabase, PAS de base SQL managée.
+### Fin Sprint 1 — review
 
-### Directive UX "jamais vue"
-
-Emmanuel a insisté : exploiter à fond les libs premium. 7 moments signature définis dans `ux-design-specification.md` Annexe section 14. Component catalog dans `component-catalog.md` = bible implémentation avec URLs et noms exacts.
-
-### Persona narrative IA
-
-**Le Chartiste Lettré** — voix cultivée, ironique, ancrée dans 3-5 chiffres précis par paragraphe, liste de proscription explicite ("leverage", "unlock", "navigating", em-dashes en série). Construit via role prompting + few-shot Matt Levine + anchoring numérique.
-
-### Hypothèse à valider en semaine 1-2
-
-**Marc l'analyste sell-side** — son pain point "briefing macro européen quotidien" n'est **pas validé**. Plan : 5 interviews utilisateur (20 min chacun) + 1 sondage Twitter/X. Seuil : ≥ 3/5 confirment → validé ; sinon Marc déclassé en secondaire.
+Vu que Sprint 1 est pur setup et qu'on a déjà review passée sur 1.1, on fera **une review groupée classique** (pas security) sur les 5 stories restantes + 1.2 en fin de sprint. Pas de security review ce sprint (décidé : Sprint 2b est le premier).
 
 ---
 
-## 🔗 Références rapides
+## 📚 Fichiers clés à consulter
 
-- **Repo :** https://github.com/BL-Capital/yieldview
-- **Issue validation Bryan :** https://github.com/BL-Capital/yieldview/issues/3
-- **Issue nom de domaine :** https://github.com/BL-Capital/yieldview/issues/2
-- **BMAD v6.3.0 source :** https://github.com/bmad-code-org/BMAD-METHOD
-- **Documentation BMAD :** https://bmadcode.com/
-- **Clone local BMAD :** `~/.bmad-tools/BMAD-METHOD/`
+### État projet
+- `docs/planning-artifacts/sprint-status.yaml` — 69 stories, 173 pts, 8 sprints
+- `docs/planning-artifacts/architecture.md` — v2.1, versions figées
+- `docs/planning-artifacts/epics.md` — 69 stories complètes
+
+### Stories Sprint 1
+- `docs/implementation-artifacts/1-1-setup-nextjs-15-react-19.md` — **done**
+- `docs/implementation-artifacts/1-2-design-tokens-tailwind-fonts.md` — **review**
+- Stories 1.3-1.7 : à créer via `bmad-create-story` en début de session suivante (elles existent dans epics.md mais pas encore spec'd)
+
+### Maquettes
+- Stitch : https://stitch.withgoogle.com/projects/9668374120836169449
+- GitHub ticket Bryan : `BL-Capital/yieldview#4`
+
+### Memories nouvelles
+- `sprint_workflow.md` — nouveau rythme dev batch
+- `security_strategy.md` — stratégie sécurité YieldField
 
 ---
 
-## 📝 Dernière commande git
+## 🛠️ Environnement technique
 
-```bash
-git log --oneline -5
-3ee0397 Close BMAD Phase 3 with implementation readiness gate check
-0785676 Upgrade BMAD v6.0 → v6.3.0 and regenerate all planning artifacts
-f4d8d8a Add UX Design v1.0 (BMAD Phase 3 - Solutioning)  [v1 obsolete]
-67c3ac0 Architecture v1.2 - Enriched UI/UX stack           [v1 obsolete]
-b0d58e7 Architecture v1.1 - Integrate Motion+ & Aceternity UI [v1 obsolete]
+Identique à la session précédente (cf. version précédente NEXT_SESSION.md). Pas de changement. Stack figée Next 15.5.15 + React 19 + TS 5.9 strict + Tailwind 4.2.2 + pnpm 10.33.
+
+**PATH bash rappel :** `export PATH="/c/Users/emmanuel.luiz_wedooa/AppData/Roaming/npm:$PATH"` avant les commandes pnpm.
+
+---
+
+## ⚠️ Points d'attention
+
+1. **Nouveau workflow sprint** : à partir de Sprint 2, toutes les stories d'un sprint sont dev en batch, puis review groupée. Sprint 1 en transition.
+2. **Security review** : pas avant Sprint 2b (quand l'API Claude rentre dans le scope)
+3. **Ne pas push sans validation Emmanuel** — 8 commits en attente
+4. **Valider Story 1.2 visuellement avant de push** (vérifier les couleurs/fonts sur localhost:3000)
+5. **Stories 1.3 → 1.7 à spec'er** avant dev (elles ne sont pas encore des fichiers dans `implementation-artifacts/`, juste des entrées dans epics.md)
+
+---
+
+## 🔁 Prompt de reprise ultra-court
+
+```
+Reprise YieldField Sprint 1. Story 1.1 done + Story 1.2 review (commit 129cd39).
+2/7 stories Sprint 1 faites. 8 commits locaux en attente push sur emmanuel.
+7 maquettes Stitch générées, ticket Bryan #4 ouvert.
+Nouveau workflow décidé : dev batch + review groupée fin de sprint.
+Stratégie sécurité : skill custom à créer Sprint 2a, premier run Sprint 2b.
+Prochaine étape : valider Story 1.2 visuellement puis créer + dev Stories 1.3 à 1.7.
+Lis NEXT_SESSION.md pour le détail.
 ```
 
 ---
 
-## ✅ Checklist de reprise (à faire au début de la prochaine session)
-
-- [ ] Lire ce fichier `NEXT_SESSION.md` en intégralité
-- [ ] `git status` et `git log -5` pour vérifier l'état
-- [ ] `cat docs/bmm-workflow-status.yaml | head -80` pour voir où on en est
-- [ ] Vérifier si Bryan a répondu aux issues #2 et #3 : `gh issue view 2 --comments` et `gh issue view 3 --comments`
-- [ ] Saluer Emmanuel en français, résumer l'état en 3 phrases
-- [ ] Proposer de démarrer par les 3 corrections priorité haute (Gap #1, #3, #4)
-- [ ] **NE PAS relancer Bryan** sauf demande explicite d'Emmanuel
-
----
-
-**Bonne reprise ! La planning est solide, le stack est verrouillé, tout est prêt pour attaquer le code.** 🚀
+*Fichier mis à jour par Claude Opus 4.6 (1M context) via sauvegarde contexte + mémoire. Session du 2026-04-12, ~1h00 locale. Memories persistantes dans `C:\Users\emmanuel.luiz_wedooa\.claude\projects\C--00--ANTIGRAVITY-PROJECTS-19--YIELDFIELD-BRYAN\memory\`.*
