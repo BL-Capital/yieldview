@@ -24,12 +24,15 @@ phases:
 
   phase_2_definition:
     name: "Product Definition"
-    status: "in_progress"
+    status: "completed"
     workflows:
       prd:
         status: "completed"
-        artifact: "docs/PRD_BMAD_Site_Finance_Bryan_v1.1.docx"
-        completed_at: "2026-04-11T13:20:00Z"
+        artifact: "docs/prd-yieldfield-2026-04-11.md"
+        previous_artifacts:
+          - "docs/PRD_BMAD_Site_Finance_Bryan_v1.0.docx"
+          - "docs/PRD_BMAD_Site_Finance_Bryan_v1.1.docx"
+        completed_at: "2026-04-11T15:00:00Z"
       tech_spec:
         status: "optional"
         artifact: null
@@ -69,5 +72,5 @@ phases:
         artifact: null
         completed_at: null
 
-current_phase: "phase_2_definition"
+current_phase: "phase_3_architecture"
 next_recommended_workflow: "architecture"
