@@ -145,17 +145,50 @@ Les NFRs les plus structurants pour l'architecture de YieldField :
 
 ### Styling & UI
 
-**Choice:** **Tailwind CSS + shadcn/ui + Framer Motion**
+**Choice:** **Tailwind CSS + shadcn/ui + Aceternity UI + Motion+ (Framer Motion)**
 
 **Rationale:**
-- Tailwind : classes utilitaires, purge automatique, bundle minimal
-- shadcn/ui : composants React copy-paste de qualité premium (sobres, accessibles)
-- Framer Motion : animations fluides pour hero number ticker et transitions scroll
+- **Tailwind** : classes utilitaires, purge automatique, bundle minimal
+- **shadcn/ui** : composants React copy-paste de qualité premium (sobres, accessibles) — sert de base pour les primitives (Button, Card, Dialog, Input, etc.)
+- **Aceternity UI** (abonnement actif) : composants animés haut de gamme "wow factor" — **parfait pour le positionnement "magazine en ligne de luxe"** du PRD. Copy-paste components, pas de dépendance lourde.
+- **Motion+ / Framer Motion** (abonnement actif) : animations fluides (hero number ticker, scroll reveals, parallax, page transitions)
 - Aligné design system #0A1628 + #C9A84C via `tailwind.config.ts`
 
+**Aceternity UI — composants clés identifiés pour YieldField :**
+
+| Composant | Usage | FR associée |
+|---|---|---|
+| **Hero Parallax / Aurora Background** | Hero section home avec KPIs animés | FR-001, FR-002 |
+| **Sparkles / Background Beams** | Fond vivant finance (effet "luxe") | Design premium |
+| **Number Ticker (Motion)** | Hero metrics qui s'incrémentent de 0 | FR-002 |
+| **Timeline** | Page Coulisses | FR-007 |
+| **Code Block / Tracing Beam** | Affichage prompts versionnés | FR-008 |
+| **Bento Grid** | Dashboard KPIs segmentés par thème | FR-001 |
+| **Shimmer / Glare Card** | Cards KPIs premium | FR-001, FR-003 |
+| **Animated Tooltip** | Détails KPI au hover | FR-001 |
+| **Meteors / Grid Background** | Banner alert VIX en mode "crise" | FR-017 |
+| **Text Generate Effect** | Apparition progressive du briefing | FR-004 |
+
+**Motion+ — usages avancés :**
+- **Layout animations** : transitions fluides entre KPIs au update quotidien
+- **Scroll triggered** : parallax de la timeline Coulisses
+- **Page transitions** : entre /fr et /en (pas de flash)
+- **Gesture-based** : drag des cards KPIs sur mobile (V2)
+
 **Trade-offs:**
-- ✓ Rapidité de dev, qualité design "luxe" atteignable
-- ✗ Bundle Framer Motion ≈ 50KB (acceptable pour l'effet visuel)
+- ✓ **Rapidité de dev extrême** — composants prêts à l'emploi, Claude Code + Aceternity = velocity ×3
+- ✓ **Qualité design "luxe" immédiate** — objectif magazine premium atteignable sans designer
+- ✓ Aceternity ships as copy-paste (pas de runtime dependency)
+- ✗ Bundle Framer Motion Plus ≈ 50-60KB (acceptable, mitigé par tree-shaking des imports)
+- ✗ Learning curve mineure sur les composants avancés Aceternity (Claude Code guide)
+
+**Impact sur la timeline :**
+Ces outils raccourcissent le sprint Design/UI d'environ 30-40%. Le risque "ambition design vs timeline" (risque R7 du Product Brief) est **fortement atténué**.
+
+**Impact sur NFR-001 (LCP < 2s) :**
+- Aceternity components sont généralement `client`-only → utiliser `"use client"` avec parcimonie
+- Privilégier les composants statiques pour le hero visible au premier rendu
+- Animations lazy-loaded après hydration
 
 ---
 
@@ -1134,10 +1167,144 @@ yieldview/
 | A5 | next-intl bundle trop lourd | Medium | Lazy-load traductions par locale |
 | A6 | VIX archive insuffisante (< 252j) | Medium | Bootstrap initial avec historique CBOE public (1 script one-shot) |
 | A7 | Open Graph image generation timeout Edge | Low | Cache 1h + fallback image statique |
+| A8 | Aceternity components client-heavy (impact LCP) | Medium | Stratégie : server-side skeleton du hero + hydratation progressive des animations. Lighthouse CI bloque merge si < 90. |
+| A9 | Motion+ bundle impact mobile | Low | Tree-shaking imports Framer Motion, lazy-load animations non-critical |
 
 ---
 
-## 14. Phase de déploiement initial (bootstrap)
+## 14. Design System & Animation Strategy
+
+### Design tokens (Tailwind config)
+
+```typescript
+// tailwind.config.ts (extrait)
+theme: {
+  extend: {
+    colors: {
+      // Brand
+      'yield-dark': '#0A1628',        // Fond principal
+      'yield-gold': '#C9A84C',        // Accent or
+      'yield-gold-light': '#E5C67F',  // Accent hover
+      'yield-ink': '#F4F4F5',         // Texte principal
+      'yield-muted': '#94A3B8',       // Texte secondaire
+
+      // Semantic finance
+      'bull': '#22C55E',              // Vert hausse
+      'bear': '#EF4444',              // Rouge baisse
+      'neutral': '#94A3B8',           // Flat
+
+      // Alert levels (FR-017)
+      'alert-warning': '#F59E0B',     // VIX > p90
+      'alert-danger': '#DC2626',      // VIX > p95
+      'alert-crisis': '#991B1B',      // VIX > p99
+    },
+    fontFamily: {
+      'serif': ['Instrument Serif', 'Playfair Display', 'serif'],  // Titres éditoriaux
+      'sans': ['Inter', 'system-ui', 'sans-serif'],                // Body
+      'mono': ['JetBrains Mono', 'monospace'],                      // Chiffres
+    }
+  }
+}
+```
+
+### Animation Strategy (Motion+ / Framer Motion)
+
+**Principe :** Les animations doivent **servir l'information**, pas la distraire.
+
+**3 niveaux d'animation :**
+
+1. **Functional** (obligatoires, toujours activées) :
+   - Number ticker du hero (FR-002)
+   - Scroll reveal léger (opacity + translate 20px)
+   - Page transitions FR/EN
+   - Loading skeletons
+
+2. **Delight** (premium, respectent `prefers-reduced-motion`) :
+   - Parallax Hero (Aceternity Aurora/Beams)
+   - Hover states sur cards KPIs (shimmer glare)
+   - Text Generate Effect sur briefing
+   - Tracing Beam sur timeline Coulisses
+
+3. **Alert** (conditionnelles, mode crise FR-017) :
+   - Meteors/Grid effect en banner
+   - Pulse de l'indicateur VIX
+   - Red shimmer sur KPIs en alerte
+
+### Page-by-page Aceternity/Motion blueprint
+
+#### Homepage `/[locale]/page.tsx`
+
+```
+┌─────────────────────────────────────────────┐
+│ [Alert Banner - conditional, Meteors]       │  ← FR-017
+├─────────────────────────────────────────────┤
+│                                             │
+│   HERO SECTION                              │
+│   [Aurora Background / Background Beams]    │  ← Aceternity
+│                                             │
+│   Tagline (Text Generate Effect)            │  ← FR-006
+│                                             │
+│   [Bento Grid - 6-8 KPIs]                   │  ← FR-001
+│   ├─ Card Taux (Shimmer Glare)              │  ← FR-002
+│   ├─ Card Spreads                           │
+│   ├─ Card Indices                           │
+│   ├─ Card VIX                               │
+│   └─ Card DXY                               │
+│                                             │
+├─────────────────────────────────────────────┤
+│ BRIEFING MACRO                              │  ← FR-004
+│ (Text Generate Effect progressif)           │  ← FR-005
+│ Metadata : theme, certainty, risk level     │
+├─────────────────────────────────────────────┤
+│ Freshness indicator                         │  ← FR-003
+├─────────────────────────────────────────────┤
+│ Footer: Disclaimer + Lang switcher          │  ← FR-014, FR-015
+└─────────────────────────────────────────────┘
+```
+
+#### Page Coulisses `/[locale]/coulisses/page.tsx`
+
+```
+┌─────────────────────────────────────────────┐
+│ [Tracing Beam - vertical scroll]            │  ← Aceternity
+│                                             │
+│ ● Étape 1 - Idée originelle                 │  ← FR-007
+│   (Screenshot + description MDX)            │
+│                                             │
+│ ● Étape 2 - BMAD Method                     │
+│                                             │
+│ ● Étape 3 - Pipeline nocturne               │
+│   (Architecture diagram)                    │
+│                                             │
+│ ● Étape 4 - Prompts v01 → v06               │  ← FR-008
+│   [Code Block Aceternity avec diff]         │
+│                                             │
+│ ● Étape 5 - Déploiement                     │
+│   [API Logs table - 7 derniers runs]        │  ← FR-009
+│                                             │
+└─────────────────────────────────────────────┘
+```
+
+### Accessibilité des animations
+
+- Toutes les animations respectent `prefers-reduced-motion: reduce`
+- Alternative : fade simple pour utilisateurs sensibles
+- Focus visible conservé
+- Pas d'animation infinie sur éléments critiques
+
+### Performance budget
+
+| Metric | Budget | Strategy |
+|---|---|---|
+| First Contentful Paint | < 1s | Server-rendered hero skeleton |
+| Largest Contentful Paint | < 2s | Image hero optimisée + fonts preloaded |
+| Total Blocking Time | < 200ms | Animations après hydration |
+| Cumulative Layout Shift | < 0.1 | Dimensions fixes pour tous les composants animés |
+| JavaScript bundle (initial) | < 200KB gzipped | Tree-shake Framer Motion, lazy Aceternity |
+
+---
+
+## 15. Phase de déploiement initial (bootstrap)
 
 Actions ponctuelles AVANT de lancer le pipeline quotidien :
 
@@ -1154,7 +1321,7 @@ Actions ponctuelles AVANT de lancer le pipeline quotidien :
 
 ---
 
-## 15. Hand-off to Phase 4 — Sprint Planning
+## 16. Hand-off to Phase 4 — Sprint Planning
 
 L'architecture couvre **100% des 29 exigences** du PRD (19 FRs + 10 NFRs).
 
