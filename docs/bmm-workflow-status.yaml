@@ -24,12 +24,12 @@ phases:
 
   phase_2_definition:
     name: "Product Definition"
-    status: "not_started"
+    status: "in_progress"
     workflows:
       prd:
-        status: "required"
-        artifact: null
-        completed_at: null
+        status: "completed"
+        artifact: "docs/PRD_BMAD_Site_Finance_Bryan_v1.1.docx"
+        completed_at: "2026-04-11T13:20:00Z"
       tech_spec:
         status: "optional"
         artifact: null
@@ -69,5 +69,5 @@ phases:
         artifact: null
         completed_at: null
 
-current_phase: "phase_1_discovery"
-next_recommended_workflow: "product-brief"
+current_phase: "phase_2_definition"
+next_recommended_workflow: "architecture"
