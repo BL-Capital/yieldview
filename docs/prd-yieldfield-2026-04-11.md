@@ -318,14 +318,20 @@ Bryan doit pouvoir corriger/surcharger manuellement le briefing IA généré ava
 **Priority:** Must Have
 
 **Description:**
-Module d'alerte automatique qui change le ton du briefing et affiche une bannière visuelle quand le VIX dépasse 30 ou en cas de spike de volatilité détecté.
+Module d'alerte automatique basé sur une approche **percentile** (statistique dynamique) plutôt qu'un seuil fixe. Déclenchement quand le VIX dépasse son 90ᵉ percentile glissant (fenêtre 252 jours ouvrés ≈ 1 an). Change le ton du briefing et affiche une bannière visuelle.
 
 **Acceptance Criteria:**
-- [ ] Seuil configurable (default : VIX > 30)
+- [ ] Calcul du 90ᵉ percentile VIX sur 252 derniers jours ouvrés (fenêtre glissante)
+- [ ] Déclenchement alerte si `VIX_today > VIX_p90_252d`
+- [ ] Alternative : seuil escalé (p90 = warning, p95 = alert, p99 = crisis)
 - [ ] Bannière visuelle rouge/orange en haut de page
 - [ ] Tone du briefing IA modifié (prompt conditionnel "crise mode")
 - [ ] Libellé bilingue FR/EN ("Marché sous tension" / "Market under stress")
 - [ ] Log de l'événement dans le pipeline
+- [ ] Historique des alertes conservé (JSON sur R2)
+
+**Rationale:**
+Approche percentile plutôt que seuil fixe (30) car plus robuste dans le temps : en 2020 VIX a dépassé 80, en 2017 il était stable à 10. Un seuil dynamique s'adapte aux régimes de marché et évite les faux positifs/négatifs.
 
 **Dependencies:** FR-004, FR-011
 
@@ -453,7 +459,7 @@ Preuve mesurable de qualité technique pour recruteurs tech.
 
 ### NFR-003: Disponibilité 99%
 
-**Priority:** Should Have
+**Priority:** Must Have
 
 **Description:**
 Le site doit être accessible 99% du temps (hors maintenance planifiée).
@@ -462,9 +468,10 @@ Le site doit être accessible 99% du temps (hors maintenance planifiée).
 - [ ] Uptime monitoring via UptimeRobot (gratuit)
 - [ ] 99% uptime sur 30 jours glissants
 - [ ] Dashboard de monitoring public ou interne
+- [ ] Alerte email si downtime > 5 min
 
 **Rationale:**
-Cloudflare Pages offre naturellement > 99.9%. L'objectif est atteignable sans surcoût.
+Cloudflare Pages offre naturellement > 99.9%. L'objectif est atteignable sans surcoût mais doit être mesuré et garanti — un site vitrine inaccessible = candidature ratée pour Bryan.
 
 ---
 
@@ -700,8 +707,8 @@ Levier direct pour G1b (reconnaissance communautaire) : chaque partage LinkedIn/
 
 | Priority | FRs | NFRs | Total |
 |----------|-----|------|-------|
-| Must Have | 17 | 6 | 23 |
-| Should Have | 1 | 3 | 4 |
+| Must Have | 17 | 7 | 24 |
+| Should Have | 1 | 2 | 3 |
 | Could Have | 1 | 1 | 2 |
 | **Total** | **19** | **10** | **29** |
 
@@ -772,10 +779,12 @@ Levier direct pour G1b (reconnaissance communautaire) : chaque partage LinkedIn/
 - **Q4 :** ~~Analytics MVP ou V2 ?~~ → ✅ **Résolu** : intégré en MVP (FR-018 Must Have)
 - **Q5 :** ~~Open Graph dynamique ?~~ → ✅ **Résolu** : intégré en MVP (FR-019 Must Have)
 
-**Nouvelles questions ouvertes :**
+**Questions Q6/Q7 — Résolues :**
 
-- **Q6 :** Quel seuil exact pour le module Alert VIX (30 ? 25 ? dynamique vs percentile) ?
-- **Q7 :** NFR-003 (uptime 99%) — garder en Should Have ou passer en Must Have ? (Cloudflare Pages offre naturellement > 99.9%, donc atteignable sans effort)
+- **Q6 :** ~~Seuil alert VIX ?~~ → ✅ **Résolu** : approche **percentile glissant 90/252j** (FR-017 mis à jour)
+- **Q7 :** ~~NFR-003 uptime 99% Must/Should ?~~ → ✅ **Résolu** : passé en **Must Have**
+
+**Aucune question ouverte restante** (hormis le nom de domaine en attente via Issue #2).
 
 ---
 
