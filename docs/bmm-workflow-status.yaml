@@ -7,12 +7,12 @@ bmad_version: "v6"
 phases:
   phase_1_discovery:
     name: "Discovery & Ideation"
-    status: "not_started"
+    status: "in_progress"
     workflows:
       product_brief:
-        status: "recommended"
-        artifact: null
-        completed_at: null
+        status: "completed"
+        artifact: "docs/product-brief-yieldfield-2026-04-11.md"
+        completed_at: "2026-04-11T14:00:00Z"
       brainstorm:
         status: "optional"
         artifact: null
