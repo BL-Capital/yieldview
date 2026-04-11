@@ -23,7 +23,7 @@ stepsCompleted:
 # Architecture — YieldField
 
 **Projet :** YieldField — Site Vitrine Finance de Marché × IA
-**Version :** 2.0 (refaite en BMAD v6.3.0)
+**Version :** 2.1 (versions figées post-Story 1.1 + déviations Tailwind 4 / pnpm documentées)
 **Date :** 2026-04-11
 **Architecte :** Emmanuel — WEDOOALL Solutions (System Architect)
 **Méthodologie :** BMAD Method v6.3.0 — Phase 3 Solutioning
@@ -68,16 +68,19 @@ stepsCompleted:
 
 ### 2.1 Starter choisi
 
-**Next.js 15 App Router — via `create-next-app@latest`**
+**Next.js 15 App Router — via `create-next-app@15`** (pinning majeur pour éviter Next 16 qui est latest depuis fin 2026)
+
+Stratégie repo existant non vide : init dans `/tmp` puis copie sélective (hors `README.md`, `.gitignore` fusionné manuellement).
 
 ```bash
-npx create-next-app@latest yieldfield \
+# Depuis /tmp (le repo yieldview existe déjà avec LICENSE, _bmad/, .claude/, docs/)
+npx create-next-app@15 yieldfield-tmp \
   --typescript \
   --tailwind \
   --app \
   --src-dir \
-  --import-alias "@/*" \
-  --use-npm
+  --import-alias "@/*"
+# Puis copie sélective vers le repo root + pnpm install
 ```
 
 ### 2.2 Justification
@@ -88,14 +91,20 @@ npx create-next-app@latest yieldfield \
 - **Tailwind intégré** : design tokens cohérents, bundle optimisé par purge
 - **src-dir** : sépare `src/` du config pour clarté
 
-### 2.3 Ce que le starter décide (ne pas re-décider)
+### 2.3 Ce que le starter décide (versions figées post-Story 1.1)
 
-- Framework React : **Next.js 15**
-- Language : **TypeScript 5.x strict**
-- Styling : **Tailwind CSS 3.4.x**
-- Dev server : **Turbopack**
-- Linting : **ESLint 9 + config Next**
-- Structure de base : `src/app/`, `src/components/`, `src/lib/`
+Versions réelles installées et validées par smoke tests (build + lint + typecheck + dev HTTP 200) :
+
+| Composant | Version figée | Note |
+|---|---|---|
+| **Next.js** | `15.5.15` | Pinned majeur, Next 16 exclu pour le MVP |
+| **React** | `19.1.0` + `react-dom 19.1.0` | Zero breaking change détecté sur template stock |
+| **TypeScript** | `5.9.3` strict | `moduleResolution: bundler` → **pas de `baseUrl`** (redondant) |
+| **Tailwind CSS** | `4.2.2` + `@tailwindcss/postcss` | **DÉVIATION vs v1.0** : Tailwind 4 au lieu de 3.4. Config CSS-based via `@theme` inline dans `globals.css` (plus de `tailwind.config.ts`). Impact Story 1.2 re-spécée. |
+| **ESLint** | `9.39.4` + `eslint-config-next` 15.5.15 | Flat config (`eslint.config.mjs`) |
+| **Package manager** | **`pnpm 10.33.0`** | **DÉVIATION vs v1.0** : pnpm au lieu de `--use-npm`. Cohérence avec epics.md/sprint-plan. `pnpm-lock.yaml` committé. |
+| **Dev/Build bundler** | Turbopack (dev) / Webpack (build) | Turbopack en build retiré post-review (encore flaggé experimental dans 15.5) |
+| **Structure** | `src/app/`, `src/components/`, `src/lib/` | Inchangée |
 
 ---
 
@@ -806,43 +815,62 @@ yieldfield/
 
 ### 5.2 Key dependencies (`package.json`)
 
+**État Story 1.1 (committé) — base Next + React + TS + Tailwind seule :**
+
 ```json
 {
   "dependencies": {
-    "next": "^15.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next-intl": "^3.x",
-    "@radix-ui/react-dialog": "^1.x",
-    "@radix-ui/react-dropdown-menu": "^2.x",
-    "@radix-ui/react-toast": "^1.x",
-    "@radix-ui/react-tooltip": "^1.x",
-    "tailwindcss": "^3.4.x",
-    "tailwind-merge": "^2.x",
-    "class-variance-authority": "^0.7.x",
-    "clsx": "^2.x",
-    "motion": "^12.0.0",
-    "@rive-app/react-canvas": "^4.x",
-    "@dotlottie/react-player": "^1.x",
-    "@vercel/og": "^0.6.x",
-    "@aws-sdk/client-s3": "^3.x",
-    "@anthropic-ai/sdk": "^0.30.x",
-    "zod": "^3.x",
-    "lucide-react": "^0.x",
-    "zustand": "^4.x"
+    "next": "15.5.15",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "typescript": "^5.x",
-    "@types/react": "^19.x",
-    "@types/node": "^20.x",
-    "vitest": "^2.x",
-    "@playwright/test": "^1.x",
-    "@lhci/cli": "^0.14.x",
-    "eslint": "^9.x",
-    "prettier": "^3.x"
+    "typescript": "^5",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@tailwindcss/postcss": "^4",
+    "tailwindcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.15",
+    "@eslint/eslintrc": "^3"
   }
 }
 ```
+
+**Cible finale MVP — ajouts progressifs via Stories 1.2 à 5.x :**
+
+```json
+{
+  "dependencies": {
+    "next-intl": "^3.x",                     // Story 1.4
+    "@radix-ui/react-dialog": "^1.x",        // Story 1.3 (shadcn base)
+    "@radix-ui/react-dropdown-menu": "^2.x",
+    "@radix-ui/react-toast": "^1.x",
+    "@radix-ui/react-tooltip": "^1.x",
+    "tailwind-merge": "^2.x",                // Story 1.3 (cn helper)
+    "class-variance-authority": "^0.7.x",
+    "clsx": "^2.x",
+    "motion": "^12.0.0",                     // Story 3.1
+    "@rive-app/react-canvas": "^4.x",        // Story 4.2
+    "@dotlottie/react-player": "^1.x",       // Story 4.1
+    "@vercel/og": "^0.6.x",                  // Story 5.7
+    "@aws-sdk/client-s3": "^3.x",            // Story 2.11 (R2 client)
+    "@anthropic-ai/sdk": "^0.30.x",          // Story 2.8
+    "zod": "^3.x",                           // Story 2.1
+    "lucide-react": "^0.x",                  // Story 1.3
+    "zustand": "^4.x"                        // Story 3.x (client state)
+  },
+  "devDependencies": {
+    "vitest": "^2.x",                        // Story 1.7
+    "@playwright/test": "^1.x",              // Story 6.7
+    "@lhci/cli": "^0.14.x",                  // Story 6.1
+    "prettier": "^3.x"                       // Story 1.7
+  }
+}
+```
+
+**Note Tailwind 4 :** plus de `tailwindcss` en dependency seule — le plugin PostCSS est désormais `@tailwindcss/postcss` (package séparé). Import unique `@import "tailwindcss";` dans `globals.css`.
 
 **Note importante :** shadcn/ui, Aceternity UI Pro et Magic UI **ne sont pas des dépendances npm**. Ils sont copy-pasted dans `src/components/ui/`, `src/components/aceternity/`, et `src/components/magic-ui/`. Cela garantit zéro runtime dependency et contrôle total.
 
@@ -1039,6 +1067,18 @@ Toute déviation nécessite un amendement explicite de ce document.
 | 5 | Dual file pattern pending.json + latest.json pour override humain | Résoudre la tension "IA jamais manuelle" vs "override" |
 | 6 | Risques architecturaux passés de 12 à 14 (A13 Alpha Vantage, A14 hallucinations financières) | Enrichissement depuis le Skeptic review du Product Brief |
 | 7 | Implementation sequence réordonnée en 43 étapes sur 8 semaines | Alignement avec timeline PRD v2 révisée |
+
+### 8.bis — Changelog v2.0 → v2.1 (post-Story 1.1, 2026-04-11)
+
+| # | Changement | Motivation |
+|---|---|---|
+| 1 | **Tailwind 4.2.2** au lieu de Tailwind 3.4.x (section 2.3 + 5.2) | Le template `create-next-app@15` installe Tailwind 4 par défaut. Décision Emmanuel post-review : accepter v4 (écosystème shadcn/Aceternity/Magic UI supporte déjà v4, pas de dette technique à créer). Impact : plus de `tailwind.config.ts`, config via `@theme` CSS inline dans `globals.css`. |
+| 2 | **pnpm 10.33.0** au lieu de `--use-npm` (section 2.1 + 2.3) | Cohérence avec epics.md/sprint-plan.md qui utilisent déjà `pnpm run ...`. Lockfile `pnpm-lock.yaml` committé. |
+| 3 | **Versions figées** : Next `15.5.15`, React `19.1.0`, TS `5.9.3` (section 2.3 + 5.2) | Pinning précis post-smoke tests (build 6.9s / 108 kB, lint clean, typecheck clean, dev HTTP 200). |
+| 4 | **Pas de `baseUrl: "."`** dans tsconfig (section 2.3) | Redondant avec `moduleResolution: bundler` en TS 5. Le path alias `@/*` fonctionne sans. Décision Emmanuel post-review. |
+| 5 | **Strategy init repo non vide** : `/tmp` + copie sélective (section 2.1) | Le repo `yieldview` contient déjà LICENSE, _bmad/, .claude/, docs/, NEXT_SESSION.md. `create-next-app .` aurait échoué. |
+| 6 | **package.json split en deux blocs** (section 5.2) : état Story 1.1 committé + cible MVP avec stories d'ajout | Traçabilité : chaque dep future est rattachée à la story qui l'introduit. |
+| 7 | Scripts `build` et `lint` corrigés post-review Sonnet 4.6 : `"build": "next build"` (retrait `--turbopack` experimental) et `"lint": "eslint ."` (fix ESLint 9 flat config no-op) | Code review identifiée comme patch P1 + P2 lors du review Story 1.1. |
 
 ---
 
