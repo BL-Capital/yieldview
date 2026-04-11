@@ -1,12 +1,25 @@
 # Architecture — YieldField
 
 **Projet :** YieldField — Site Vitrine Finance de Marché × IA
-**Version :** 1.0
+**Version :** 1.2 (Stack UI/UX enrichie : Next 15 + React 19 + Motion 12 + Aceternity Pro + Magic UI + Rive + Lottie)
 **Date :** 2026-04-11
 **Architecte :** Emmanuel — WEDOOALL Solutions (System Architect)
 **Méthodologie :** BMAD v6 — Phase 3 (Solutioning)
 **Référence :** ARCH-YIELDFIELD-2026-001
 **PRD source :** `docs/prd-yieldfield-2026-04-11.md` (v2.0, 29 exigences, 5 epics)
+
+## Changelog
+
+- **v1.0** (2026-04-11) — Architecture initiale (Next 14 + shadcn/ui + Framer Motion)
+- **v1.1** (2026-04-11) — Intégration Motion+ et Aceternity UI Pro
+- **v1.2** (2026-04-11) — Stack UI/UX enrichie :
+  - Upgrade Next.js 15 + React 19
+  - Motion 12 (remplace Framer Motion)
+  - Ajout Magic UI (complément Aceternity Pro)
+  - Ajout Rive (avatar hero signature)
+  - Ajout Lottie/dotLottie (micro-animations)
+  - React Three Fiber + Drei (reporté V2)
+  - Performance budget révisé (250KB JS, 400KB total)
 
 ---
 
@@ -121,20 +134,24 @@ Les NFRs les plus structurants pour l'architecture de YieldField :
 
 ### Frontend
 
-**Choice:** **Next.js 14 (App Router) + React 18 + TypeScript**
+**Choice:** **Next.js 15 (App Router) + React 19 + TypeScript**
 
 **Rationale:**
+- **Next.js 15** : dernière version stable avec React 19 support, Partial Prerendering (PPR) optimisé, Turbopack dev stable
+- **React 19** : Server Components matures, `useOptimistic`, `use()` API, Actions, amélioration DX
 - App Router supporte nativement SSG + ISR, parfait pour contenu mis à jour 1×/jour
 - Edge Runtime Cloudflare compatible (via `@cloudflare/next-on-pages`)
 - Écosystème Claude Code optimisé pour Next.js
 - next-intl pour i18n FR/EN avec routing `/fr` et `/en`
-- TypeScript obligatoire pour robustesse et DX
+- TypeScript strict obligatoire pour robustesse et DX
 
 **Trade-offs:**
 - ✓ SSG performant, prerender complet, SEO excellent
+- ✓ React 19 réduit boilerplate (Actions, use hook)
 - ✓ Hot reload rapide, DX Claude Code optimale
 - ✗ Learning curve App Router pour Bryan (mitigé par Claude Code)
 - ✗ Bundle légèrement plus lourd que Astro (mais reste < 200KB gzipped)
+- ⚠ React 19 encore récent : vérifier compatibilité libs tierces (Aceternity, Rive) au setup
 
 **Alternatives considérées et rejetées :**
 - **Astro** : plus léger mais moins d'écosystème React côté interactivité
@@ -143,52 +160,191 @@ Les NFRs les plus structurants pour l'architecture de YieldField :
 
 ---
 
-### Styling & UI
+### UI Kit de base
 
-**Choice:** **Tailwind CSS + shadcn/ui + Aceternity UI + Motion+ (Framer Motion)**
+**Choice:** **Tailwind CSS + shadcn/ui + Radix Primitives**
 
 **Rationale:**
 - **Tailwind** : classes utilitaires, purge automatique, bundle minimal
-- **shadcn/ui** : composants React copy-paste de qualité premium (sobres, accessibles) — sert de base pour les primitives (Button, Card, Dialog, Input, etc.)
-- **Aceternity UI** (abonnement actif) : composants animés haut de gamme "wow factor" — **parfait pour le positionnement "magazine en ligne de luxe"** du PRD. Copy-paste components, pas de dépendance lourde.
-- **Motion+ / Framer Motion** (abonnement actif) : animations fluides (hero number ticker, scroll reveals, parallax, page transitions)
+- **shadcn/ui** : composants React copy-paste de qualité premium (Button, Card, Dialog, Input, Dropdown, Toast) — sert de fondation accessible pour les primitives
+- **Radix Primitives** (sous-jacent à shadcn/ui) : accessibilité WAI-ARIA native, keyboard navigation, focus management — valide NFR-006 WCAG AA par défaut
 - Aligné design system #0A1628 + #C9A84C via `tailwind.config.ts`
 
-**Aceternity UI — composants clés identifiés pour YieldField :**
+---
 
-| Composant | Usage | FR associée |
-|---|---|---|
-| **Hero Parallax / Aurora Background** | Hero section home avec KPIs animés | FR-001, FR-002 |
-| **Sparkles / Background Beams** | Fond vivant finance (effet "luxe") | Design premium |
-| **Number Ticker (Motion)** | Hero metrics qui s'incrémentent de 0 | FR-002 |
-| **Timeline** | Page Coulisses | FR-007 |
-| **Code Block / Tracing Beam** | Affichage prompts versionnés | FR-008 |
-| **Bento Grid** | Dashboard KPIs segmentés par thème | FR-001 |
-| **Shimmer / Glare Card** | Cards KPIs premium | FR-001, FR-003 |
-| **Animated Tooltip** | Détails KPI au hover | FR-001 |
-| **Meteors / Grid Background** | Banner alert VIX en mode "crise" | FR-017 |
-| **Text Generate Effect** | Apparition progressive du briefing | FR-004 |
+### Composants premium & effets signature
 
-**Motion+ — usages avancés :**
-- **Layout animations** : transitions fluides entre KPIs au update quotidien
-- **Scroll triggered** : parallax de la timeline Coulisses
-- **Page transitions** : entre /fr et /en (pas de flash)
+**Choice:** **Aceternity UI Pro + Magic UI**
+
+**Rationale:**
+- **Aceternity UI Pro** (abonnement actif) : composants animés haut de gamme "wow factor" — **parfait pour le positionnement "magazine en ligne de luxe"** du PRD. Copy-paste components, pas de dépendance runtime lourde.
+- **Magic UI** : librairie complémentaire open-source avec 150+ composants animés — riche en effets signature (orbiting circles, text animations, interactive buttons, marquee, etc.). Compatible Tailwind + Motion.
+- Ces deux libs sont **complémentaires** (pas concurrentes) : Aceternity couvre les composants "héros" (parallax, 3D, beams), Magic UI les micro-interactions et patterns courants.
+
+**Composants signature identifiés pour YieldField :**
+
+| Composant | Librairie | Usage | FR associée |
+|---|---|---|---|
+| **Hero Parallax / Aurora / Background Beams** | Aceternity | Hero section home | FR-001, FR-002 |
+| **Sparkles / Grid / Dot Pattern** | Aceternity | Fond vivant finance | Design premium |
+| **Number Ticker** | Magic UI | Hero metrics qui s'incrémentent de 0 | FR-002 |
+| **Animated List / Marquee** | Magic UI | Bandeau scroll des KPIs secondaires | FR-001 |
+| **Timeline / Tracing Beam** | Aceternity | Page Coulisses | FR-007 |
+| **Code Block Animated** | Aceternity | Prompts versionnés avec diff | FR-008 |
+| **Bento Grid** | Aceternity | Dashboard KPIs segmentés par thème | FR-001 |
+| **Shimmer / Glare Card / Meteors** | Aceternity | Cards KPIs premium | FR-001, FR-003 |
+| **Animated Tooltip** | Aceternity | Détails KPI au hover | FR-001 |
+| **Text Generate Effect / Typewriter** | Aceternity / Magic UI | Apparition progressive briefing/tagline | FR-004, FR-006 |
+| **Neon Gradient Card / Shine Border** | Magic UI | Alert banner mode crise | FR-017 |
+| **Animated Gradient Text** | Magic UI | Titre tagline avec gradient or | FR-006 |
+| **Ripple / Pulsating Dot** | Magic UI | Indicateur "live" sur dernière update | FR-003 |
+
+---
+
+### Animation & Transitions
+
+**Choice:** **Motion 12 + Motion+ (Framer Motion premium)**
+
+**Rationale:**
+- **Motion 12** (anciennement Framer Motion) : version unifiée React + JS vanilla, performances améliorées, API déclarative mature
+- **Motion+** (abonnement actif) : composants premium officiels, features avancées (layout animations, timeline, scroll linked), supports Claude Code
+- Fournit la base technique pour Aceternity et Magic UI (les deux utilisent Motion underneath)
+
+**Usages stratégiques :**
+- **Layout animations** : transitions fluides entre KPIs au update quotidien (valeurs qui s'animent sans CLS)
+- **Scroll triggered** : parallax + reveal de la timeline Coulisses
+- **Page transitions** : entre `/fr` et `/en` (pas de flash blanc)
+- **Shared layout** : transition du card KPI vers la page détail (V2)
 - **Gesture-based** : drag des cards KPIs sur mobile (V2)
 
+**Bundle impact :** ~50-60KB gzipped pour Motion 12, acceptable vu le gain UX.
+
+---
+
+### Avatar interactif & storytelling
+
+**Choice:** **Rive — Avatar animé temps réel dans le hero homepage**
+
+**Rationale:**
+- **Rive** : runtime ultra-léger (~60KB), animations vectorielles temps réel, state machines pilotables en JS
+- **Usage signature YieldField** : **personnage animé en présentateur/trader dans le hero** qui "présente" les KPIs du jour
+- **Interactions dynamiques** :
+  - L'avatar réagit au niveau de risque du jour (metadata `risk_level` du briefing)
+    - `low` → pose détendue, lecture journal
+    - `medium` → concentré devant écran
+    - `high` → tension, gestes animés
+  - L'avatar change de tenue selon le thème du jour (metadata `theme_of_day`)
+  - En mode crise (FR-017) : expression tendue + effet Meteors de Aceternity autour
+- **Pourquoi c'est puissant pour YieldField** :
+  - Signature visuelle mémorable (différenciation vs sites finance génériques)
+  - Rend la data "humaine" et vivante
+  - Démontre la maîtrise d'outils modernes (atout pour recruteurs tech)
+
+**Workflow création :**
+- Bryan peut créer l'avatar Rive sans dev (éditeur visuel Rive Community)
+- Export en `.riv` (~30-100KB)
+- Intégration : `<RiveComponent src="/avatar.riv" stateMachines="main" />`
+- Props bindings : `riskLevel`, `themeOfDay`, `vixAlertLevel`
+
 **Trade-offs:**
-- ✓ **Rapidité de dev extrême** — composants prêts à l'emploi, Claude Code + Aceternity = velocity ×3
-- ✓ **Qualité design "luxe" immédiate** — objectif magazine premium atteignable sans designer
-- ✓ Aceternity ships as copy-paste (pas de runtime dependency)
-- ✗ Bundle Framer Motion Plus ≈ 50-60KB (acceptable, mitigé par tree-shaking des imports)
-- ✗ Learning curve mineure sur les composants avancés Aceternity (Claude Code guide)
+- ✓ Effet wow unique, faible bundle
+- ✓ Outil visuel (pas besoin de designer pro)
+- ✗ Temps de création de l'avatar (~1-2 jours) — **mitigé : peut démarrer avec avatar statique puis enrichir itérativement**
+- ✗ 1 asset dynamique en plus à charger (mitigé : preload + SSR skeleton)
 
-**Impact sur la timeline :**
-Ces outils raccourcissent le sprint Design/UI d'environ 30-40%. Le risque "ambition design vs timeline" (risque R7 du Product Brief) est **fortement atténué**.
+**Fallback :** illustration statique SVG si Rive fail à charger.
 
-**Impact sur NFR-001 (LCP < 2s) :**
-- Aceternity components sont généralement `client`-only → utiliser `"use client"` avec parcimonie
-- Privilégier les composants statiques pour le hero visible au premier rendu
-- Animations lazy-loaded après hydration
+---
+
+### Illustrations animées légères
+
+**Choice:** **Lottie / dotLottie pour icônes et micro-animations**
+
+**Rationale:**
+- **Lottie** : animations vectorielles exportées d'After Effects / Lottie Files — qualité studio
+- **dotLottie** (format compressé) : ~50% plus léger que Lottie JSON standard
+- **Librairie `@lottiefiles/react-lottie-player`** ou **`@dotlottie/react-player`** (recommandé)
+
+**Usages identifiés :**
+- **Icônes animées** dans les cards KPI (flèche up/down, icônes catégorie)
+- **Empty states** (ex: "pas encore de données")
+- **Loading states** (skeleton + Lottie spinner)
+- **Micro-interactions** sur hover / click des boutons CTA
+- **Transitions d'état** entre freshness levels (fresh → stale → very_stale)
+
+**Bundle impact :** ~20KB par animation (acceptable si lazy-loaded)
+
+**Sources d'assets :**
+- **LottieFiles** (gratuit) : milliers d'animations finance/data prêtes à l'emploi
+- Peut être généré via **IconScout** / **Figma → Lottie** plugin
+
+**Trade-offs:**
+- ✓ Qualité visuelle premium, ultra-léger
+- ✓ Bryan peut customiser sans coder
+- ✗ Pas pour animations interactives complexes (usage Rive pour ça)
+
+---
+
+### 3D (reporté V2)
+
+**Choice:** **React Three Fiber + Drei — reporté V2**
+
+**Rationale:**
+- Scènes 3D (ex: courbe des taux en 3D, visualisation spreads) = effet wow potentiel majeur
+- **Reporté V2** : scope MVP déjà ambitieux, et Aceternity/Rive/Lottie suffisent pour l'effet "luxe"
+- Si V2 : React Three Fiber (wrapper React de Three.js) + Drei (helpers)
+- Cas d'usage potentiel :
+  - Yield curve en 3D animée en fond de page Coulisses
+  - Globe des marchés mondiaux avec timezone indicators
+
+**Non-impact MVP** : cette ligne documente l'intention future pour que l'architecture reste extensible.
+
+---
+
+### Résumé Stack UI/UX
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      YieldField UI Stack                    │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │  Signature Layer (effet "luxe")                  │      │
+│  │  • Rive (avatar hero)                            │      │
+│  │  • Lottie (micro-animations)                     │      │
+│  │  • Aceternity Pro (hero, bento, timeline)        │      │
+│  │  • Magic UI (text effects, indicators)           │      │
+│  └──────────────────────────────────────────────────┘      │
+│                        │                                    │
+│                        ▼                                    │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │  Animation Engine                                │      │
+│  │  • Motion 12 / Motion+                           │      │
+│  └──────────────────────────────────────────────────┘      │
+│                        │                                    │
+│                        ▼                                    │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │  Base Components (accessibles)                   │      │
+│  │  • shadcn/ui (Button, Card, Dialog, Input...)    │      │
+│  │  • Radix Primitives (underlying)                 │      │
+│  └──────────────────────────────────────────────────┘      │
+│                        │                                    │
+│                        ▼                                    │
+│  ┌──────────────────────────────────────────────────┐      │
+│  │  Styling                                         │      │
+│  │  • Tailwind CSS (design tokens)                  │      │
+│  └──────────────────────────────────────────────────┘      │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Impact timeline :** Ces outils raccourcissent le sprint Design/UI d'environ **40-50%**. Le risque R7 (ambition design vs timeline 4 semaines) passe de **Medium → Low**.
+
+**Impact NFR-001 (LCP < 2s) :**
+- Avatar Rive : preload + skeleton SSR
+- Aceternity/Magic UI components client-only : `"use client"` avec parcimonie, hydratation progressive
+- Lottie : lazy-loaded, pas dans le critical path
+- Motion 12 : tree-shaking agressif via imports spécifiques
+- **Budget bundle initial JS strict : < 250KB gzipped** (augmenté de 200KB pour accommoder Rive + Motion)
 
 ---
 
@@ -962,62 +1118,151 @@ POST https://api.anthropic.com/v1/messages
 ```
 yieldview/
 ├── src/
-│   ├── app/                    # Next.js App Router
+│   ├── app/                         # Next.js 15 App Router
 │   │   ├── [locale]/
 │   │   │   ├── page.tsx
-│   │   │   ├── coulisses/
+│   │   │   ├── coulisses/page.tsx
 │   │   │   └── layout.tsx
 │   │   ├── api/
-│   │   │   ├── revalidate/
-│   │   │   └── og/
+│   │   │   ├── revalidate/route.ts  # ISR on-demand trigger
+│   │   │   └── og/route.tsx         # FR-019 OG image generator
 │   │   └── layout.tsx
-│   ├── components/             # Composants React
-│   │   ├── ui/                 # shadcn/ui
-│   │   ├── dashboard/          # KPIs, HeroMetric
-│   │   ├── briefing/           # Briefing display
-│   │   └── coulisses/          # Timeline, prompts
-│   ├── lib/                    # Utils & clients
-│   │   ├── r2.ts
-│   │   ├── content.ts
-│   │   └── i18n.ts
-│   └── types/                  # TypeScript types
-│       └── content.ts
-├── messages/                   # i18n translations
+│   ├── components/
+│   │   ├── ui/                      # shadcn/ui primitives
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   └── ...
+│   │   ├── aceternity/              # Aceternity Pro components
+│   │   │   ├── aurora-background.tsx
+│   │   │   ├── bento-grid.tsx
+│   │   │   ├── tracing-beam.tsx
+│   │   │   ├── text-generate-effect.tsx
+│   │   │   └── ...
+│   │   ├── magic-ui/                # Magic UI components
+│   │   │   ├── number-ticker.tsx
+│   │   │   ├── animated-gradient-text.tsx
+│   │   │   ├── pulsating-dot.tsx
+│   │   │   ├── marquee.tsx
+│   │   │   └── ...
+│   │   ├── rive/                    # Rive avatar
+│   │   │   ├── HeroAvatar.tsx
+│   │   │   └── AvatarStateMachine.ts
+│   │   ├── lottie/                  # Lottie wrappers
+│   │   │   ├── LottieIcon.tsx
+│   │   │   └── animations/          # .lottie files
+│   │   ├── dashboard/               # KPIs, HeroMetric, Bento
+│   │   │   ├── HeroSection.tsx
+│   │   │   ├── KpiBentoGrid.tsx
+│   │   │   ├── KpiCard.tsx
+│   │   │   └── FreshnessIndicator.tsx
+│   │   ├── briefing/                # Briefing display
+│   │   │   ├── BriefingPanel.tsx
+│   │   │   ├── TaglineHeader.tsx
+│   │   │   └── MetadataChips.tsx
+│   │   ├── coulisses/               # Timeline, prompts, logs
+│   │   │   ├── Timeline.tsx
+│   │   │   ├── PromptCodeBlock.tsx
+│   │   │   └── PipelineLogsTable.tsx
+│   │   ├── alerts/                  # FR-017 VIX alert UI
+│   │   │   ├── AlertBanner.tsx
+│   │   │   └── CrisisIndicator.tsx
+│   │   └── common/                  # Header, Footer, LangSwitcher
+│   ├── lib/
+│   │   ├── r2.ts                    # R2 read client (S3-compat)
+│   │   ├── content.ts               # Load latest.json + fallback
+│   │   ├── i18n.ts                  # next-intl config
+│   │   ├── rive-utils.ts            # Rive helpers
+│   │   └── motion-config.ts         # Motion 12 reduced-motion config
+│   ├── hooks/
+│   │   ├── useContent.ts
+│   │   ├── useRiveAvatar.ts
+│   │   └── usePrefersReducedMotion.ts
+│   └── types/
+│       ├── content.ts
+│       └── rive.ts
+├── messages/                        # i18n translations
 │   ├── fr.json
 │   └── en.json
+├── public/
+│   ├── rive/
+│   │   └── avatar.riv               # Avatar Rive (~60-100KB)
+│   ├── lottie/
+│   │   ├── arrow-up.lottie
+│   │   ├── arrow-down.lottie
+│   │   └── ...
+│   └── fonts/                       # Self-hosted fonts
 ├── scripts/
-│   ├── pipeline/               # Pipeline scripts
+│   ├── pipeline/
 │   │   ├── fetch-market-data.ts
 │   │   ├── analyze-with-claude.ts
 │   │   ├── detect-vix-alert.ts
 │   │   ├── publish-to-r2.ts
-│   │   └── notify-on-failure.ts
-│   ├── pre-commit              # Secret scanner (déjà existant)
-│   └── setup-hooks.sh          # Install hooks (déjà existant)
-├── prompts/                    # Versioned AI prompts
+│   │   ├── notify-on-failure.ts
+│   │   └── bootstrap-vix-history.ts # One-shot init
+│   ├── pre-commit                   # Secret scanner (déjà existant)
+│   └── setup-hooks.sh
+├── prompts/
 │   ├── briefing-v01.md
 │   ├── briefing-v02.md
 │   └── ...
 ├── tests/
-│   ├── unit/                   # Vitest
-│   └── e2e/                    # Playwright
+│   ├── unit/                        # Vitest
+│   └── e2e/                         # Playwright
 ├── .github/
 │   └── workflows/
 │       ├── daily-pipeline.yml
 │       ├── lighthouse-check.yml
 │       └── ci.yml
-├── docs/                       # Documentation BMAD
+├── docs/                            # BMAD Documentation
 │   ├── product-brief-*.md
 │   ├── prd-*.md
 │   ├── architecture-*.md
 │   └── bmm-workflow-status.yaml
-├── bmad/                       # BMAD config
+├── bmad/
 ├── .env.example
 ├── next.config.mjs
 ├── tailwind.config.ts
 ├── tsconfig.json
 └── package.json
 ```
+
+### Key dependencies (package.json)
+
+```json
+{
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "next-intl": "^3.x",
+    "@radix-ui/react-*": "latest",
+    "tailwindcss": "^3.4.x",
+    "motion": "^12.0.0",
+    "@rive-app/react-canvas": "^4.x",
+    "@dotlottie/react-player": "^1.x",
+    "@vercel/og": "^0.6.x",
+    "@aws-sdk/client-s3": "^3.x",
+    "@anthropic-ai/sdk": "^0.30.x",
+    "zod": "^3.x",
+    "clsx": "^2.x",
+    "tailwind-merge": "^2.x",
+    "class-variance-authority": "^0.7.x",
+    "lucide-react": "^0.x"
+  },
+  "devDependencies": {
+    "typescript": "^5.x",
+    "@types/react": "^19.x",
+    "@types/node": "^20.x",
+    "vitest": "^2.x",
+    "@playwright/test": "^1.x",
+    "@lighthouse-ci/cli": "^0.14.x",
+    "eslint": "^9.x",
+    "prettier": "^3.x"
+  }
+}
+```
+
+**Note :** shadcn/ui, Aceternity UI et Magic UI ne sont **pas des dépendances npm** — ils sont copy-pasted dans `src/components/ui`, `src/components/aceternity` et `src/components/magic-ui`. Cela garantit le contrôle total, zéro runtime dependency, et la possibilité de les modifier librement.
 
 ### Testing Strategy
 
@@ -1167,8 +1412,11 @@ yieldview/
 | A5 | next-intl bundle trop lourd | Medium | Lazy-load traductions par locale |
 | A6 | VIX archive insuffisante (< 252j) | Medium | Bootstrap initial avec historique CBOE public (1 script one-shot) |
 | A7 | Open Graph image generation timeout Edge | Low | Cache 1h + fallback image statique |
-| A8 | Aceternity components client-heavy (impact LCP) | Medium | Stratégie : server-side skeleton du hero + hydratation progressive des animations. Lighthouse CI bloque merge si < 90. |
-| A9 | Motion+ bundle impact mobile | Low | Tree-shaking imports Framer Motion, lazy-load animations non-critical |
+| A8 | Aceternity + Magic UI components client-heavy (impact LCP) | Medium | Stratégie : server-side skeleton du hero + hydratation progressive des animations. Lighthouse CI bloque merge si < 90. |
+| A9 | Motion 12 bundle impact mobile | Low | Tree-shaking imports Motion, lazy-load animations non-critical |
+| A10 | React 19 incompatibilité avec libs tierces (Rive, Aceternity, Magic UI) | Medium | Smoke tests au setup initial. Fallback Next.js 14 + React 18 si blocage critique. |
+| A11 | Rive avatar non prêt au launch | Medium | Fallback SVG statique. Intégration Rive en itération post-MVP si besoin. |
+| A12 | Lottie assets non disponibles / qualité insuffisante | Low | LottieFiles contient des milliers d'animations finance gratuites. Fallback : icônes statiques Lucide React. |
 
 ---
 
@@ -1207,59 +1455,83 @@ theme: {
 }
 ```
 
-### Animation Strategy (Motion+ / Framer Motion)
+### Animation Strategy (Motion 12 + Rive + Lottie)
 
 **Principe :** Les animations doivent **servir l'information**, pas la distraire.
 
-**3 niveaux d'animation :**
+**4 niveaux d'animation :**
 
 1. **Functional** (obligatoires, toujours activées) :
-   - Number ticker du hero (FR-002)
-   - Scroll reveal léger (opacity + translate 20px)
+   - Number ticker du hero avec Magic UI (FR-002)
+   - Scroll reveal léger (opacity + translate 20px) via Motion
    - Page transitions FR/EN
    - Loading skeletons
+   - Lottie icons dans les cards KPI (up/down arrows, category icons)
 
 2. **Delight** (premium, respectent `prefers-reduced-motion`) :
    - Parallax Hero (Aceternity Aurora/Beams)
-   - Hover states sur cards KPIs (shimmer glare)
-   - Text Generate Effect sur briefing
-   - Tracing Beam sur timeline Coulisses
+   - Hover states sur cards KPIs (Shimmer Glare, Meteors)
+   - Text Generate Effect sur briefing (Aceternity)
+   - Tracing Beam sur timeline Coulisses (Aceternity)
+   - Marquee scroll des KPIs secondaires (Magic UI)
 
-3. **Alert** (conditionnelles, mode crise FR-017) :
-   - Meteors/Grid effect en banner
-   - Pulse de l'indicateur VIX
-   - Red shimmer sur KPIs en alerte
+3. **Signature** (Rive avatar — l'identité de YieldField) :
+   - Avatar hero réactif au `risk_level` du jour
+   - Changement d'expression/pose selon `theme_of_day`
+   - Interactions : click sur avatar → micro-animation + tooltip
+   - State machines pilotées via props React
 
-### Page-by-page Aceternity/Motion blueprint
+4. **Alert** (conditionnelles, mode crise FR-017) :
+   - Meteors/Grid effect en banner (Aceternity)
+   - Pulsating Dot sur indicateur VIX (Magic UI)
+   - Neon Gradient Card rouge sur KPIs en alerte (Magic UI)
+   - Avatar Rive en mode tension
+   - Haptic feedback CSS (pulse subtil)
+
+### Page-by-page blueprint (Aceternity + Magic UI + Rive + Motion + Lottie)
 
 #### Homepage `/[locale]/page.tsx`
 
 ```
-┌─────────────────────────────────────────────┐
-│ [Alert Banner - conditional, Meteors]       │  ← FR-017
-├─────────────────────────────────────────────┤
-│                                             │
-│   HERO SECTION                              │
-│   [Aurora Background / Background Beams]    │  ← Aceternity
-│                                             │
-│   Tagline (Text Generate Effect)            │  ← FR-006
-│                                             │
-│   [Bento Grid - 6-8 KPIs]                   │  ← FR-001
-│   ├─ Card Taux (Shimmer Glare)              │  ← FR-002
-│   ├─ Card Spreads                           │
-│   ├─ Card Indices                           │
-│   ├─ Card VIX                               │
-│   └─ Card DXY                               │
-│                                             │
-├─────────────────────────────────────────────┤
-│ BRIEFING MACRO                              │  ← FR-004
-│ (Text Generate Effect progressif)           │  ← FR-005
-│ Metadata : theme, certainty, risk level     │
-├─────────────────────────────────────────────┤
-│ Freshness indicator                         │  ← FR-003
-├─────────────────────────────────────────────┤
-│ Footer: Disclaimer + Lang switcher          │  ← FR-014, FR-015
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│ [Alert Banner - conditional, Meteors + Neon]        │  ← FR-017 (Aceternity + Magic)
+├──────────────────────────────────────────────────────┤
+│                                                      │
+│   HERO SECTION                                       │
+│   [Aurora Background / Beams]                        │  ← Aceternity Pro
+│                                                      │
+│   ┌──────────────────┐   ┌────────────────────────┐ │
+│   │                  │   │ Tagline                │ │
+│   │  RIVE AVATAR     │   │ (Animated Gradient)    │ │  ← FR-006 (Magic UI)
+│   │  (signature)     │   │                        │ │
+│   │                  │   │ Briefing macro         │ │  ← FR-004 (Text Generate)
+│   │  Reactive:       │   │ (Text Generate Effect) │ │
+│   │  - risk_level    │   │                        │ │
+│   │  - theme_of_day  │   │ Metadata chips         │ │  ← FR-005
+│   │                  │   │ [theme] [risk] [event] │ │
+│   └──────────────────┘   └────────────────────────┘ │
+│                                                      │
+│   [Pulsating Dot] "Live • Updated 8:23 AM"          │  ← FR-003 (Magic UI)
+│                                                      │
+├──────────────────────────────────────────────────────┤
+│   [Bento Grid - 6-8 KPIs]                           │  ← FR-001 (Aceternity)
+│   ┌───────────┬───────────┬───────────┐             │
+│   │ OAT 10Y   │ Bund 10Y  │ Spread    │             │
+│   │ (Shimmer) │ (Shimmer) │ (Glare)   │             │  ← FR-002 (Magic Ticker)
+│   │ ↗ 3.15%   │ → 2.51%   │ 64 bps    │             │
+│   │ [Lottie↗] │ [Lottie→] │ [Lottie↗] │             │  ← Lottie icons
+│   ├───────────┼───────────┼───────────┤             │
+│   │ CAC 40    │ S&P 500   │ VIX       │             │
+│   │           │           │ [Pulse]   │             │
+│   ├───────────┴───────────┴───────────┤             │
+│   │ Dollar Index / Rendements         │             │
+│   └───────────────────────────────────┘             │
+│                                                      │
+├──────────────────────────────────────────────────────┤
+│ [Marquee scroll - KPIs secondaires]                 │  ← Magic UI
+├──────────────────────────────────────────────────────┤
+│ Footer: Disclaimer + Lang switcher FR/EN            │  ← FR-014, FR-015
+└──────────────────────────────────────────────────────┘
 ```
 
 #### Page Coulisses `/[locale]/coulisses/page.tsx`
@@ -1270,17 +1542,25 @@ theme: {
 │                                             │
 │ ● Étape 1 - Idée originelle                 │  ← FR-007
 │   (Screenshot + description MDX)            │
+│   [Lottie spark animation]                  │  ← Lottie
 │                                             │
 │ ● Étape 2 - BMAD Method                     │
+│   (Diagram SVG + texte)                     │
 │                                             │
 │ ● Étape 3 - Pipeline nocturne               │
-│   (Architecture diagram)                    │
+│   (Architecture diagram animé)              │
 │                                             │
 │ ● Étape 4 - Prompts v01 → v06               │  ← FR-008
 │   [Code Block Aceternity avec diff]         │
+│   [Copy button avec Magic UI shine]         │
 │                                             │
 │ ● Étape 5 - Déploiement                     │
 │   [API Logs table - 7 derniers runs]        │  ← FR-009
+│   [Pulsating Dot si run réussi]             │
+│                                             │
+│ ● Étape 6 - Avatar Rive                     │
+│   [Preview interactive de l'avatar]         │  ← Meta narrative
+│   (Bryan explique comment il a été créé)    │
 │                                             │
 └─────────────────────────────────────────────┘
 ```
@@ -1296,28 +1576,77 @@ theme: {
 
 | Metric | Budget | Strategy |
 |---|---|---|
-| First Contentful Paint | < 1s | Server-rendered hero skeleton |
-| Largest Contentful Paint | < 2s | Image hero optimisée + fonts preloaded |
-| Total Blocking Time | < 200ms | Animations après hydration |
-| Cumulative Layout Shift | < 0.1 | Dimensions fixes pour tous les composants animés |
-| JavaScript bundle (initial) | < 200KB gzipped | Tree-shake Framer Motion, lazy Aceternity |
+| First Contentful Paint | < 1s | Server-rendered hero skeleton (SSR-friendly) |
+| Largest Contentful Paint | < 2s | Rive avatar preloaded + fonts preloaded + critical CSS inlined |
+| Total Blocking Time | < 200ms | Animations/Rive/Lottie après hydration |
+| Cumulative Layout Shift | < 0.1 | Dimensions fixes pour avatar Rive et tous les composants animés |
+| JavaScript bundle (initial) | < 250KB gzipped | Tree-shake Motion 12, lazy Aceternity/Magic UI non-critiques |
+| Rive asset | < 100KB | Compression .riv, 1 seul state machine |
+| Lottie assets | < 20KB chaque | Format dotLottie compressé |
+| Total weight (first paint) | < 400KB | Strict budget pour maintenir LCP < 2s sur 4G |
+
+**Stratégie de chargement :**
+
+```
+Priorité 1 (critical, inlined) :
+  ├─ Critical CSS (Tailwind purged)
+  ├─ Fonts Instrument Serif + Inter (preload)
+  └─ Next.js runtime minimal
+
+Priorité 2 (high, preload) :
+  ├─ Rive avatar .riv
+  ├─ Hero KPIs data (from R2 latest.json)
+  └─ Above-the-fold Aceternity components
+
+Priorité 3 (lazy, after hydration) :
+  ├─ Motion 12 features avancées
+  ├─ Lottie animations (intersection observer)
+  ├─ Below-the-fold components
+  └─ Page Coulisses assets (prefetch on hover)
+
+Priorité 4 (on-demand) :
+  └─ React Three Fiber (V2, si activé)
+```
 
 ---
 
 ## 15. Phase de déploiement initial (bootstrap)
 
-Actions ponctuelles AVANT de lancer le pipeline quotidien :
+Actions ponctuelles AVANT de lancer le pipeline quotidien et publier le site :
 
+### Bootstrap Backend / Pipeline
 1. **Créer le bucket R2** `yieldfield-content` dans Cloudflare
-2. **Bootstrapper l'historique VIX** (1 script `scripts/bootstrap-vix-history.ts` qui fetch 252 jours de VIX et upload dans R2 `archive/`)
+2. **Bootstrapper l'historique VIX** (script `scripts/bootstrap-vix-history.ts` fetch 252 jours de VIX, upload dans R2 `archive/`)
 3. **Configurer les secrets** GitHub Actions + Cloudflare Pages env vars
 4. **Créer les prompts v01** dans `prompts/briefing-v01.md`
 5. **Premier run manuel** du pipeline (`workflow_dispatch`)
 6. **Valider le résultat** dans R2 + frontend local
 7. **Activer le cron** (commenté initialement)
 8. **Configurer UptimeRobot** sur le domaine
-9. **Configurer Cloudflare Web Analytics** (token dans env)
+9. **Activer Cloudflare Web Analytics**
 10. **Domaine DNS** (après Issue #2 résolue)
+
+### Bootstrap Frontend / UI
+11. **Setup Next.js 15 + React 19 + TypeScript** (`npx create-next-app@latest`)
+12. **Installer shadcn/ui** (`npx shadcn@latest init`) et composants de base (Button, Card, Dialog, Toast)
+13. **Copy-paste les composants Aceternity Pro** utilisés (Aurora, Bento, Tracing Beam, Text Generate, Code Block)
+14. **Copy-paste les composants Magic UI** (Number Ticker, Animated Gradient Text, Pulsating Dot, Marquee)
+15. **Installer Motion 12** (`npm install motion`) et configurer `prefers-reduced-motion`
+16. **Créer ou sourcer l'avatar Rive** :
+    - Option A : Bryan crée l'avatar dans Rive Community (éditeur visuel web)
+    - Option B : Démarrer avec avatar statique SVG, enrichir itérativement
+    - Export `.riv` dans `public/rive/avatar.riv`
+17. **Installer Rive React** (`npm install @rive-app/react-canvas`)
+18. **Sourcer 5-10 animations Lottie** depuis LottieFiles (gratuit, finance/data icons)
+19. **Installer dotLottie player** (`npm install @dotlottie/react-player`)
+20. **Configurer Tailwind** avec design tokens (brand colors + finance semantic + fonts Instrument Serif)
+21. **Setup next-intl** (FR/EN routing + messages)
+22. **Smoke test local** : page `/fr` et `/en` avec données mockées
+23. **Lighthouse audit local** pour valider le performance budget avant prod
+
+### Validation compatibilité
+24. **Test compatibilité React 19** avec Rive, Aceternity, Magic UI (risque A10 architecture)
+    - Si incompatibilité bloquante : fallback Next.js 14 + React 18
 
 ---
 
