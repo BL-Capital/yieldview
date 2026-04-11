@@ -17,12 +17,12 @@ inputDocuments:
 ## Résumé
 
 - **Project Level :** 3 (Complex)
-- **Total stories :** 57
-- **Total points :** 142
-- **Nombre de sprints :** 5 (4 core + 1 stabilisation) + 1 sprint launch
-- **Cadence :** 1 semaine par sprint
+- **Total stories :** 69
+- **Total points :** 173
+- **Nombre de sprints :** 6 core (Sprint 1, Sprint 2a, Sprint 2b, Sprint 3, Sprint 4, Sprint 5) + 1 stabilisation (Sprint 6, 2 semaines) + 1 launch (Sprint 7)
+- **Cadence :** 1 semaine par sprint (sauf Sprint 6 = 2 semaines)
 - **Équipe :** Lead dev Emmanuel + Claude Code (2-3 points/jour effective capacity)
-- **Target completion :** Hard launch public semaine 8
+- **Target completion :** Hard launch public semaine 9 (timeline ajustée après split Sprint 2)
 
 ---
 
@@ -74,58 +74,80 @@ inputDocuments:
 
 ---
 
-## Sprint 2 (Semaine 2) — Data Pipeline Backend
+## Sprint 2a (Semaine 2) — Data Pipeline Part 1 (Data Ingestion & Alerts)
 
-**Goal :** Pipeline nocturne opérationnel : fetch Finnhub + FRED + compute VIX alert + génération IA bilingue + stockage R2.
+**Goal :** Fondations du pipeline : schemas, clients API marché, fetch orchestré, bootstrap VIX historique, calcul d'alerte.
 
-**Points :** 32 (total Epic 2)
-**Epic :** Epic 2 — Data Pipeline Backend
+**Points :** 20 (39 total Epic 2, splitté)
+**Epic :** Epic 2 — Data Pipeline Backend (1/2)
 
 ### Stories incluses :
-- **Story 2.1** — Schemas Zod (3 points)
+- **Story 2.1** — Schemas Zod Analysis/KPI/Alert (3 points)
 - **Story 2.2** — Client Finnhub API (3 points)
 - **Story 2.3** — Client FRED API (2 points)
 - **Story 2.4** — Client Alpha Vantage marginal (P1) (1 point)
 - **Story 2.5** — Script `fetch-data.ts` + fallback (5 points)
 - **Story 2.6** — Bootstrap VIX 252 jours (3 points)
-- **Story 2.7** — Script `compute-alert.ts` (3 points)
-- **Story 2.8** — Client Claude API (3 points)
+- **Story 2.7** — Script `compute-alert.ts` avec VIX percentile (3 points)
+
+**Total :** 20 points — cohérent avec la capacity cible (15-20).
+
+### Risques sprint 2a :
+- **R1** : Finnhub rate limit hit (60 req/min) → espacer les calls, cache agressif, retry exponentiel
+- **R2** : Bootstrapping 252 jours VIX long → one-shot manuel documenté, hors chemin critique du sprint
+- **R3** : FRED auth token invalide → fallback sur valeur historique, alert manuel
+
+### Definition of Done sprint 2a :
+- [ ] `pnpm run fetch-data` exécute un fetch complet local réussi (6 KPIs + VIX)
+- [ ] Données validées Zod et persistées localement dans `scripts/out/latest.json`
+- [ ] `pnpm run compute-alert` calcule le niveau alerte VIX correctement sur 3 scénarios de test (calm / warning / crisis)
+- [ ] Bootstrap VIX complété : fichier `data/vix-history.json` avec 252 entrées
+
+---
+
+## Sprint 2b (Semaine 3) — Data Pipeline Part 2 (AI Generation & Publishing)
+
+**Goal :** Génération IA bilingue du briefing, publication R2, automation GitHub Actions, observability logs.
+
+**Points :** 19 (39 total Epic 2, splitté)
+**Epic :** Epic 2 — Data Pipeline Backend (2/2)
+
+**Dépendance :** Sprint 2a doit être terminé (schemas, fetch-data, compute-alert utilisés par generate-ai).
+
+### Stories incluses :
+- **Story 2.8** — Client Claude API (Anthropic SDK) (3 points)
 - **Story 2.9** — Prompt système v01 Chartiste Lettré (3 points)
 - **Story 2.10** — Script `generate-ai.ts` (5 points)
-- **Story 2.11** — R2 client + `pending-r2.ts` (2 points)
+- **Story 2.11** — R2 client + Script `pending-r2.ts` (2 points)
 - **Story 2.12** — Script `publish-r2.ts` (2 points)
 - **Story 2.13** — GitHub Actions `daily-pipeline.yml` (2 points)
 - **Story 2.14** — Script `log-run.ts` + GitHub Issue auto (2 points)
 
-### ⚠️ Sprint dense — 32 points en 1 semaine
+**Total :** 19 points — cohérent avec la capacity cible (15-20).
 
-Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
-- Le pipeline est majoritairement du scripting isolé, parallélisable
-- Claude Code excelle sur les scripts Node/TypeScript avec schemas clairs
-- Les stories sont petites et indépendantes
+### Risques sprint 2b :
+- **R1** : Hallucinations Claude sur structure JSON → prompt strict + validation Zod retry (3 tentatives max) + fallback briefing dégradé
+- **R2** : Dérive stylistique du Chartiste Lettré → liste de proscription explicite dans le prompt, tests humains quotidiens en semaine 1 soft launch
+- **R3** : Cloudflare R2 quotas free tier atteints → monitoring, rotation archive (rétention 30 jours max)
 
-**Scope de repli possible :** Si Sprint 2 déborde, Story 2.4 (Alpha Vantage) peut être reportée en Epic 5 post-launch sans impact majeur. Story 2.14 (log-run GitHub Issue auto) peut être simplifiée en simple log texte.
-
-### Risques sprint 2 :
-- **R1** : Hallucinations Claude sur la structure JSON attendue → fallback sur prompt plus strict + validation Zod retry
-- **R2** : Finnhub rate limit hit (60 req/min peut saturer si retries mal configurés) → espacer les calls, cache agressif
-- **R3** : Bootstrapping 252 jours de VIX peut prendre du temps → one-shot manuel, pas bloquant
-
-### Definition of Done sprint 2 :
-- [ ] Premier run manuel du pipeline (`workflow_dispatch`) réussi
-- [ ] `r2://yieldfield-content/latest.json` créé et lisible
-- [ ] Briefing FR + EN généré avec voix Chartiste Lettré
-- [ ] Alert level calculé correctement
-- [ ] Archive et logs persistés
+### Definition of Done sprint 2b :
+- [ ] `pnpm run generate-ai` produit un JSON valide avec briefing FR + EN voix Chartiste Lettré
+- [ ] Premier run manuel du pipeline complet (`workflow_dispatch`) réussi end-to-end
+- [ ] `r2://yieldfield-content/latest.json` créé et lisible via HTTPS
+- [ ] Alert level reflété dans le JSON publié
+- [ ] GitHub Issue auto créée si run échoué (dry-run simulé avec failure injectée)
+- [ ] Archive daté dans `r2://yieldfield-content/archive/YYYY-MM-DD.json`
 
 ---
 
-## Sprint 3 (Semaine 3) — Core UI (Hero Dashboard)
+## Sprint 3 (Semaine 4) — Core UI (Hero Dashboard)
 
-**Goal :** Hero homepage fonctionnel avec Aurora + (SVG fallback avatar) + Tagline + Briefing + Bento KPIs visibles.
+**Goal :** Hero homepage fonctionnel avec Aurora + (SVG fallback avatar) + Tagline + Briefing + Bento KPIs + Marquee secondaire visibles.
 
-**Points :** 34/34 (100% d'Epic 3)
+**Points :** 36/36 (100% d'Epic 3)
 **Epic :** Epic 3 — Core UI Components (Dashboard)
+
+⚠️ **Sprint dense — 36 points** : au-dessus de la capacity cible 15-20. Scope de repli documenté ci-dessous.
 
 ### Stories incluses :
 - **Story 3.1** — Motion 12 install + setup reduced-motion (2 points)
@@ -141,6 +163,9 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 - **Story 3.11** — Magic UI Ripple / FreshnessIndicator (1 point)
 - **Story 3.12** — Content client `r2.ts` SSR (2 points)
 - **Story 3.13** — `<HeroSection>` + `page.tsx` (3 points)
+- **Story 3.14** — Business: `<SecondaryKpisMarquee>` (2 points) — **FR27**
+
+**Scope de repli possible (si débordement Sprint 3) :** reporter Story 3.7 Glare Card (2 pts) + Story 3.11 Ripple (1 pt) en Sprint 4 ou en polish Sprint 6. Ces deux éléments sont des amplificateurs visuels non bloquants pour la DoD.
 
 ### Risques sprint 3 :
 - **R1** : Aceternity components client-heavy dégradent LCP → progressive hydration + SSR skeleton + Lighthouse CI bloquant
@@ -154,7 +179,7 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 
 ---
 
-## Sprint 4 (Semaine 4) — Rive Avatar & Coulisses Page
+## Sprint 4 (Semaine 5) — Rive Avatar & Coulisses Page
 
 **Goal :** Avatar Rive intégré (avec fallback SVG) + page Coulisses complète (Tracing Beam + Prompts + Logs) + Lottie icons sur KPIs.
 
@@ -191,11 +216,11 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 
 ---
 
-## Sprint 5 (Semaine 5) — Alerts, Newsletter, Distribution
+## Sprint 5 (Semaine 6) — Alerts, Newsletter, Distribution
 
 **Goal :** AlertBanner crisis mode + Newsletter form + OG images dynamiques + RSS feed opérationnels.
 
-**Points :** 24/24 (100% d'Epic 5)
+**Points :** 26/26 (100% d'Epic 5)
 **Epic :** Epic 5 — Alert Banner, Newsletter, Distribution
 
 ### Stories incluses :
@@ -222,7 +247,7 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 
 ---
 
-## Sprint 6 (Semaine 6-7) — Stabilisation Quality
+## Sprint 6 (Semaines 7-8) — Stabilisation Quality
 
 **Goal :** Atteindre Lighthouse ≥ 90, WCAG AA, bundle < 280 KB, tests e2e passants. Polish tout.
 
@@ -253,7 +278,7 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 
 ---
 
-## Sprint 7 (Semaine 8) — Launch & GTM
+## Sprint 7 (Semaine 9) — Launch & GTM
 
 **Goal :** Hard launch public. Distribution coordonnée. Validation hypothèse Marc.
 
@@ -315,7 +340,7 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 | FR24 | 3.10 (MetadataChips) | 3 |
 | FR25 | 3.3 (NumberTicker) | 3 |
 | FR26 | 3.11 (Pulsating Dot) | 3 |
-| FR27 | Story from Epic 5 (Marquee) | 3-5 |
+| FR27 | 3.14 (SecondaryKpisMarquee) | 3 |
 | FR29 | 3.10 (Disclaimer in Briefing) | 3 |
 
 ### Epic 4 — Coulisses
@@ -363,22 +388,24 @@ Cette semaine est **ambitieuse** (32 points vs 13-15 typique). Justification :
 ## Validation & dependencies
 
 ### Dependencies cross-sprints
-- **Sprint 2 dépend de Sprint 1** : schemas Zod nécessitent TypeScript setup
-- **Sprint 3 dépend de Sprint 1 + 2** : affichage UI a besoin des données
+- **Sprint 2a dépend de Sprint 1** : schemas Zod nécessitent TypeScript setup
+- **Sprint 2b dépend de Sprint 2a** : generate-ai consomme les outputs de fetch-data + compute-alert
+- **Sprint 3 dépend de Sprint 1 + 2a/2b** : affichage UI a besoin des données publiées sur R2
 - **Sprint 4 dépend de Sprint 3** : Coulisses réutilise des composants du hero
-- **Sprint 5 dépend de Sprint 2** : newsletter pipeline step dépend du pipeline nocturne
+- **Sprint 5 dépend de Sprint 2b** : newsletter pipeline step dépend du pipeline nocturne complet
 - **Sprint 6 dépend de Tous** : stabilisation vient après le feature work
 - **Sprint 7 dépend de Sprint 6** : launch requiert quality validée
 
 ### Parallélisable
-- Sprint 2 (backend) peut partiellement chevaucher Sprint 3 (frontend) si Bryan dispose
+- Sprint 2b peut démarrer fin de Sprint 2a si Story 2.1 Schemas terminée (Claude API client indépendant)
+- Sprint 3 peut partiellement chevaucher Sprint 2b (frontend stories 3.1-3.7 n'ont pas besoin du pipeline réel, données mockées)
 - Sprint 5 peut commencer pendant Sprint 4 pour les stories indépendantes (OG, RSS)
-- Sprint 7 story 7.3 (soft launch) démarre en semaine 6
+- Sprint 7 story 7.3 (soft launch) démarre en semaine 7
 
 ### Parcours critique
-Sprint 1 → Sprint 2 → Sprint 3 → Sprint 4 → Sprint 6 → Sprint 7
+Sprint 1 → Sprint 2a → Sprint 2b → Sprint 3 → Sprint 4 → Sprint 6 → Sprint 7
 
-Sprint 5 peut se dérouler partiellement en parallèle.
+Sprint 5 peut se dérouler partiellement en parallèle avec Sprint 4.
 
 ---
 

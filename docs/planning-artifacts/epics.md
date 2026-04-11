@@ -21,9 +21,9 @@ inputDocuments:
 - **Total FRs couvertes :** 54/54
 - **Total NFRs couvertes :** 23/23
 - **Nombre d'epics :** 7
-- **Nombre de stories :** 28
-- **Estimation totale :** 142 points Fibonacci
-- **Cadence :** 4 sprints × 1 semaine (core MVP) + 2 semaines stabilisation
+- **Nombre de stories :** 69
+- **Estimation totale :** 173 points Fibonacci
+- **Cadence :** 5 sprints × 1 semaine (core MVP, Epic 2 splitté en 2a/2b) + 2 semaines stabilisation
 - **Équipe :** Lead dev Emmanuel + Claude Code, PO Bryan
 
 ---
@@ -106,8 +106,8 @@ inputDocuments:
 
 **FRs couvertes :** FR1-FR20 (génération + données + edge cases + archive)
 **NFRs adressées :** NFR8 (pipeline reliability ≥ 95%), NFR9 (recovery), NFR10 (secrets)
-**Sprint target :** Sprint 2 (semaine 2)
-**Total points :** 32
+**Sprint target :** Sprint 2a + Sprint 2b (semaines 2-3, splitté 20/19 points)
+**Total points :** 39
 
 ### Story 2.1 — Schemas Zod (Analysis, KPI, Alert) (P0)
 **Points :** 3
@@ -234,8 +234,8 @@ inputDocuments:
 
 **FRs couvertes :** FR21-FR29 (editorial experience homepage), FR15-17 (KPI display)
 **NFRs adressées :** NFR1-6 (performance), NFR15-16 (accessibility)
-**Sprint target :** Sprint 3 (semaine 3)
-**Total points :** 34
+**Sprint target :** Sprint 3 (semaine 4, après split Sprint 2a/2b)
+**Total points :** 36
 
 ### Story 3.1 — Motion 12 install + setup reduced-motion (P0)
 **Points :** 2
@@ -340,10 +340,24 @@ inputDocuments:
 ### Story 3.13 — `<HeroSection>` + `src/app/[locale]/page.tsx` (P0)
 **Points :** 3
 **Acceptance criteria :**
-- [ ] `<HeroSection>` orchestre : Aurora + Avatar (SVG fallback d'abord) + Tagline + Briefing + MetadataChips + Freshness + BentoGrid
+- [ ] `<HeroSection>` orchestre : Aurora + Avatar (SVG fallback d'abord) + Tagline + Briefing + MetadataChips + Freshness + BentoGrid + SecondaryKpisMarquee
 - [ ] `src/app/[locale]/page.tsx` Server Component fetch data + rend `<HeroSection>`
 - [ ] Smoke test : page `/fr` affiche tout avec données mockées
 - [ ] Smoke test : page `/en` affiche tout traduit
+
+### Story 3.14 — Business: `<SecondaryKpisMarquee>` (P0)
+**Points :** 2
+**FR couverte :** FR27 (KPIs secondaires en marquee scroll continu)
+**Acceptance criteria :**
+- [ ] `src/components/magic-ui/marquee.tsx` installé via `npx magic-ui@latest add marquee` (Magic UI)
+- [ ] `src/components/dashboard/SecondaryKpisMarquee.tsx` créé : wrapper business qui reçoit `secondaryKpis: KpiData[]` (ex: EUR/USD, Gold, Oil, Yield 10Y, Copper, Brent)
+- [ ] Direction `left`, pauseOnHover `true`, vitesse ~40s par cycle
+- [ ] Chaque item : label court + NumberTicker + flèche direction Lottie (bull/bear/neutral) + variation en %
+- [ ] Respect `prefers-reduced-motion` : marquee statique, affiche tous les items en grille scrollable horizontalement
+- [ ] Intégré dans `<HeroSection>` sous le BentoGrid principal
+- [ ] Bilingue FR/EN (labels via next-intl)
+- [ ] Accessible : `aria-label="Marché secondaire en défilement continu"`, focus-visible sur items si cliquables
+- [ ] Smoke test : 6 KPIs secondaires défilent sans saccade sur Chrome + Safari
 
 ---
 
@@ -455,8 +469,8 @@ inputDocuments:
 
 **FRs couvertes :** FR17 (alert VIX), FR28 (alert banner UI), FR44-49 (newsletter + OG + RSS)
 **NFRs adressées :** NFR1-2 (perf sur OG gen), NFR13 (cost Buttondown free tier)
-**Sprint target :** Sprint 5 (semaine 5)
-**Total points :** 24
+**Sprint target :** Sprint 5 (semaine 6, après split Sprint 2a/2b)
+**Total points :** 26
 
 ### Story 5.1 — Magic UI Neon Gradient Card + Aceternity Meteors (P0)
 **Points :** 2
