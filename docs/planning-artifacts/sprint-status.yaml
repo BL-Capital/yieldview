@@ -3,7 +3,7 @@
 # Updated manually as stories progress
 
 generated: 2026-04-11
-last_updated: 2026-04-12  # Story 1.2 in-progress (Tailwind 4 @theme + self-hosted fonts)
+last_updated: 2026-04-12  # Story 1.5 in-progress (Layout Header + Footer + LanguageSwitcher)
 project: YieldField
 project_key: YFIELD
 tracking_system: file-system
@@ -26,8 +26,8 @@ development_status:
   1-2-design-tokens-tailwind-fonts: review
   1-3-shadcn-ui-base-components: review
   1-4-next-intl-bilingue-setup: review
-  1-5-layout-header-footer-langswitcher: backlog
-  1-6-pre-commit-hook-secrets: backlog
+  1-5-layout-header-footer-langswitcher: review
+  1-6-pre-commit-hook-secrets: review
   1-7-github-actions-workflow-structure: backlog
   epic-1-retrospective: optional
 
