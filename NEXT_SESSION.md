@@ -1,111 +1,116 @@
-# NEXT_SESSION — YieldField Sprint 3 (Core UI Dashboard)
+# NEXT_SESSION — YieldField Sprint 3 DONE → Review + Security
 
 **Dernière mise à jour :** 2026-04-12
-**Phase BMAD :** Phase 4 Implementation — **Sprint 3 en cours**
+**Phase BMAD :** Phase 4 Implementation — **Sprint 3 dev terminé, prêt pour review**
 
 ---
 
 ## ⚡ TL;DR (30 secondes)
 
 - **Epic 1** DONE — 7/7 stories, 18 pts
-- **Epic 2** DONE — 14/14 stories, 39 pts (Sprint 2a + 2b)
-- **180 tests passing, typecheck clean, 0 CVE**
-- **Sprint 3** = Core UI Dashboard — 14 stories, 36 pts
-- **Workflow** : dev batch toutes stories → review groupée (Blind/Edge/Auditor) → security audit → merge
-- **Pulse Ring** validé (avatar supprimé per Issue #4, UX Amendment 001)
+- **Epic 2** DONE — 14/14 stories, 39 pts
+- **Epic 3** DONE (dev) — 14/14 stories, 36 pts — **commit `877200d`**
+- **224 tests passing, typecheck clean, lint 0 errors, build OK (166 kB)**
+- **Prochain** : Code review Sprint 3 (Blind Hunter + Edge + Auditor) → Security Audit → merge sur `main`
+- **Après review** : Sprint 4 — Rive Avatar & Coulisses Page (28 pts)
 
 ---
 
-## 📋 État Epic 1 + 2 (done)
+## 🎯 Sprint 3 — Ce qui a été fait
 
-### Epic 1 — Foundation & Tooling (7/7 done)
-- 1.1 Setup Next.js 15 + React 19 + TS strict
-- 1.2 Design tokens Tailwind 4 @theme + self-hosted fonts
-- 1.3 shadcn/ui base components
-- 1.4 next-intl bilingue FR/EN
-- 1.5 Layout Header + Footer + LanguageSwitcher
-- 1.6 Pre-commit hook secrets
-- 1.7 GitHub Actions workflow structure
+### Livrables (57 fichiers, 4173 insertions)
 
-### Epic 2 — Data Pipeline (14/14 done)
-**Sprint 2a :** schemas Zod, client Finnhub, client FRED, client Alpha Vantage, fetch-data + fallback, bootstrap-vix (FRED VIXCLS), compute-alert percentile p90/252j
-**Sprint 2b :** client Claude API (Anthropic SDK), prompt Chartiste Lettré v01, generate-ai, R2 client, publish-r2, daily-pipeline.yml, log-run
+**Infrastructure :**
+- `motion` 12.38.0 installé
+- `usePrefersReducedMotion` hook + `motion-variants.ts`
+- `jsdom` + `@testing-library/react` ajoutés aux devDeps
 
----
+**Composants Aceternity :**
+- `aurora-background.tsx` — Aurora avec Color Shift selon alertLevel
+- `background-beams.tsx` — Faisceaux canvas animés (40% opacity)
+- `aurora-with-beams.tsx` — Composition
+- `bento-grid.tsx` + `bento-grid-item.tsx` — Layout asymétrique
+- `glare-card.tsx` — Shimmer doré au hover
+- `text-generate-effect.tsx` — Mot par mot avec blur
 
-## 🎯 Sprint 3 — Core UI Dashboard (36 pts)
+**Composants Magic UI :**
+- `number-ticker.tsx` — Compteur animé viewport-enter
+- `animated-gradient-text.tsx` — Gradient gold shimmer
 
-**Goal :** Hero homepage fonctionnel avec Aurora + Pulse Ring + Tagline + Briefing + Bento KPIs + Marquee secondaire.
+**Composants Business :**
+- `KpiCard.tsx` — Card financière (GlareCard + BentoGridItem + NumberTicker)
+- `KpiBentoGrid.tsx` — Grille 6 KPIs (stagger Motion 12)
+- `TaglineHeader.tsx` — Tagline avec AnimatedGradientText + next-intl
+- `MetadataChips.tsx` — Date + reading time + alert level chips
+- `BriefingPanel.tsx` — Briefing avec TextGenerateEffect + disclaimer légal
+- `FreshnessIndicator.tsx` — Dot pulsant + label "Live · Updated X min ago"
+- `RiskIndicator.tsx` — **Pulse Ring** (UX Amendment 001) — 4 états (low/warning/alert/crisis)
+- `SecondaryKpisMarquee.tsx` — Ticker financier défilant (8 KPIs secondaires)
+- `HeroSection.tsx` — Assemblage complet Aurora + Ring + Tagline + Briefing + KPIs + Marquee
 
-### Stories (à dev en batch) :
+**Data & Content :**
+- `src/data/fallback-analysis.json` — Données statiques demo valides
+- `src/data/mock-kpis.ts` — 6 KPIs primaires + 8 KPIs secondaires
+- `src/lib/content.ts` — `getLatestAnalysis()` SSR avec fallback R2
+- `src/app/[locale]/page.tsx` — Branché sur vraies données R2
 
-| Story | Description | Pts | Status |
-|---|---|---|---|
-| 3.1 | Motion 12 install + reduced-motion hook | 2 | pending |
-| 3.2 | Aceternity Aurora Background + Beams | 3 | pending |
-| 3.3 | Magic UI Number Ticker | 2 | pending |
-| 3.4 | Magic UI Animated Gradient Text | 1 | pending |
-| 3.5 | Aceternity Text Generate Effect | 2 | pending |
-| 3.6 | Aceternity Bento Grid | 3 | pending |
-| 3.7 | Aceternity Glare Card | 2 | pending |
-| 3.8 | Business `<KpiCard>` | 5 | pending |
-| 3.9 | Business `<KpiBentoGrid>` | 3 | pending |
-| 3.10 | Business BriefingPanel + TaglineHeader + MetadataChips | 5 | pending |
-| 3.11 | Magic UI Ripple / FreshnessIndicator | 1 | pending |
-| 3.12 | Content client `r2.ts` SSR | 2 | pending |
-| 3.13 | `<HeroSection>` + `page.tsx` | 3 | pending |
-| 3.14 | Business `<SecondaryKpisMarquee>` | 2 | pending |
-
-**Total : 36 pts**
-
-### Scope de repli (si débordement) :
-- Reporter Story 3.7 Glare Card (2 pts) + Story 3.11 Ripple (1 pt) en Sprint 4 ou polish Sprint 6
+**i18n :**
+- `messages/fr.json` + `messages/en.json` — Clés Hero section ajoutées
 
 ---
 
-## 🔑 Décisions clés Sprint 3
+## 🔍 Prochaine étape : Code Review Sprint 3
 
-1. **Pulse Ring** remplace l'avatar — UX Amendment 001 validé (Issue #4 Bryan). HeroSection = abstract risk indicator, pas d'avatar humain.
-2. **Données mockées** pour stories UI (3.1-3.11) — pipeline R2 branché en stories 3.12-3.13
-3. **AuroraBackground** = fond principal, **BackgroundBeams** = overlay 40% opacity
-4. **KpiCard** = composant business P0 le plus complexe (5 pts) — consomme Glare Card + NumberTicker + Lottie arrow
+### Workflow review (défini dans memory `sprint_workflow.md`)
+1. **Blind Hunter** — review adversariale (trouver les bugs cachés)
+2. **Edge Case Hunter** — boundary conditions
+3. **Auditor** — conformité architecture, patterns
 
----
+Commande pour lancer : utiliser skill `bmad-code-review`
 
-## 🛠️ Environnement technique
-
-Stack figée :
-- Next 15.5.15, React 19.1.0, TS 5.9.3 strict (pas de baseUrl)
-- Tailwind 4.2.2 (@theme CSS inline)
-- pnpm 10.33.0
-- Motion 12 (à installer Story 3.1)
-- shadcn/ui installé (Epic 1)
-
-**PATH bash :** `export PATH="/c/Users/emmanuel.luiz_wedooa/AppData/Roaming/npm:$PATH"` avant pnpm
-
-**Design tokens disponibles :** `--color-yield-dark`, `--color-yield-gold`, `--color-yield-bull`, `--color-yield-bear`, fonts Instrument Serif + Inter Variable + JetBrains Mono
+### Suivi de la Security Audit
+Security audit Sprint 3 = premier sprint avec composants client-side lourds.
+Focus : XSS via dangerouslySetInnerHTML (si présent), bundle size, deps CVE.
 
 ---
 
-## 📁 Fichiers clés
+## ⚠️ Points d'attention pour la review
 
-- `docs/planning-artifacts/sprint-plan.md` — Sprint 3 scope complet
-- `docs/planning-artifacts/ux-design-specification.md` — specs visuelles
-- `docs/planning-artifacts/ux-amendment-001-avatar-removal.md` — Pulse Ring décision
-- `docs/implementation-artifacts/3-*.md` — stories Sprint 3 (à créer)
-- `src/components/aceternity/` — composants à créer
-- `src/components/magic-ui/` — composants à créer
-- `src/components/dashboard/` — composants business à créer
-- `src/lib/content.ts` — à créer (Story 3.12)
+1. **`HeroSection.tsx`** importe `MOCK_SECONDARY_KPIS` depuis `@/data/mock-kpis` — les KPIs secondaires ne viennent pas encore de R2. C'est voulu (Story 3.14 scope limité) mais à noter.
+2. **`TaglineHeader.tsx`** utilise `useTranslations` → nécessite le `NextIntlClientProvider` wrappant dans les tests. Pour l'instant, les tests component ne testent pas TaglineHeader directement (testé visuellement via page.tsx).
+3. **`content.ts`** utilise `import ... assert { type: 'json' }` — syntax qui peut nécessiter un flag TS. À vérifier si typecheck reste clean sur CI.
+4. **First Load JS = 166 kB** — dans le budget mais à surveiller. Motion 12 pèse ~54 kB.
+5. **BackgroundBeams** utilise Canvas API — pas de fallback sans canvas npm package (warning vitest, ok en prod).
+
+---
+
+## 📦 État des stories Sprint 3
+
+| Story | Status | Commit |
+|---|---|---|
+| 3.1 Motion 12 | ✅ done | 877200d |
+| 3.2 Aurora + Beams | ✅ done | 877200d |
+| 3.3 NumberTicker | ✅ done | 877200d |
+| 3.4 AnimatedGradientText | ✅ done | 877200d |
+| 3.5 TextGenerateEffect | ✅ done | 877200d |
+| 3.6 BentoGrid | ✅ done | 877200d |
+| 3.7 GlareCard | ✅ done | 877200d |
+| 3.8 KpiCard | ✅ done | 877200d |
+| 3.9 KpiBentoGrid | ✅ done | 877200d |
+| 3.10 BriefingPanel + TaglineHeader + MetadataChips | ✅ done | 877200d |
+| 3.11 FreshnessIndicator | ✅ done | 877200d |
+| 3.12 Content client R2 SSR | ✅ done | 877200d |
+| 3.13 HeroSection + page.tsx | ✅ done | 877200d |
+| 3.14 SecondaryKpisMarquee | ✅ done | 877200d |
 
 ---
 
 ## 🔁 Prompt de reprise ultra-court
 
 ```
-Reprise YieldField Sprint 3 Core UI. Epic 1+2 done (21 stories, 57 pts, 180 tests).
-Sprint 3 = 14 stories 36 pts. Workflow : dev batch → review groupée → security → merge.
-Pulse Ring validé (pas d'avatar). Lire NEXT_SESSION.md pour le détail.
+Reprise YieldField. Epic 1+2+3 done (35 stories, 93 pts, 224 tests).
+Sprint 3 dev terminé (commit 877200d). Prochaine étape : code review Sprint 3
+(bmad-code-review) → security audit → merge. Lire NEXT_SESSION.md.
 ```
 
 ---
