@@ -32,9 +32,9 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2 — Data Pipeline Backend (splitté Sprint 2a + Sprint 2b)
-  epic-2: backlog
+  epic-2: in-progress
   # Sprint 2a — Data ingestion & alerts (20 pts)
-  2-1-schemas-zod: backlog
+  2-1-schemas-zod: review
   2-2-client-finnhub: backlog
   2-3-client-fred: backlog
   2-4-client-alpha-vantage: backlog
