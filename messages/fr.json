@@ -7,5 +7,23 @@
   },
   "Common": {
     "disclaimer": "Ceci n'est pas un conseil en investissement. Contenu éditorial généré par IA à des fins d'information et de démonstration."
+  },
+  "Header": {
+    "logoTagline": "Finance de marché éclairée par l'IA",
+    "nav": {
+      "home": "Accueil",
+      "coulisses": "Les Coulisses"
+    }
+  },
+  "Footer": {
+    "newsletter": {
+      "placeholder": "Votre e-mail",
+      "cta": "S'abonner"
+    },
+    "copyright": "Tous droits réservés."
+  },
+  "LanguageSwitcher": {
+    "fr": "Français",
+    "en": "English"
   }
 }
