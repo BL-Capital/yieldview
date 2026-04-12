@@ -1,110 +1,92 @@
-# NEXT_SESSION — YieldField Sprint 3 DONE + Reviewed → Sprint 4
+# NEXT_SESSION — YieldField Sprint 4 : Rive Avatar & Coulisses
 
 **Derniere mise a jour :** 2026-04-12
-**Phase BMAD :** Phase 4 Implementation — **Sprint 3 complet (dev + review + security), pret pour Sprint 4**
+**Phase BMAD :** Phase 4 Implementation — **Sprint 4 a demarrer**
 
 ---
 
 ## TL;DR (30 secondes)
 
-- **Epic 1** DONE — 7/7 stories, 18 pts
-- **Epic 2** DONE — 14/14 stories, 39 pts
-- **Epic 3** DONE — 14/14 stories, 36 pts — **commit `c3ed47e` (review + security fixes)**
-- **224 tests passing, typecheck clean, lint 0 errors, build OK (166 kB)**
-- **Code review** : 65 findings triaged, 8 patches applied, 2 deferred Sprint 4, ~55 dismissed
-- **Security audit** : 4/4 gates PASS (secrets, deps, TS strict, pre-commit hook)
-- **GitHub Issue #7** : Bryan notifie pour validation visuelle Hero
-- **Prochain** : Sprint 4 — Rive Avatar & Coulisses Page (28 pts)
+- **Epic 1+2+3** DONE — 35/35 stories, 93 pts, 224 tests, pushed `main`
+- **Sprint 3** review + security DONE (commit `c3ed47e`, Issue #7 Bryan)
+- **Sprint 4** : Rive Avatar & Coulisses Page — **28 pts (23 P0 + 5 P1)**
+- **Workflow habituel** : creer stories → dev batch → code review → security audit → commit + push + issue Bryan
 
 ---
 
-## Sprint 3 — Ce qui a ete fait
-
-### Livrables (57 fichiers, 4173 insertions)
-
-**Infrastructure :**
-- `motion` 12.38.0 installe
-- `usePrefersReducedMotion` hook + `motion-variants.ts`
-- `jsdom` + `@testing-library/react` ajoutes aux devDeps
-
-**Composants Aceternity :**
-- `aurora-background.tsx` — Aurora avec Color Shift selon alertLevel
-- `background-beams.tsx` — Faisceaux canvas animes (40% opacity)
-- `aurora-with-beams.tsx` — Composition
-- `bento-grid.tsx` + `bento-grid-item.tsx` — Layout asymetrique
-- `glare-card.tsx` — Shimmer dore au hover
-- `text-generate-effect.tsx` — Mot par mot avec blur
-
-**Composants Magic UI :**
-- `number-ticker.tsx` — Compteur anime viewport-enter
-- `animated-gradient-text.tsx` — Gradient gold shimmer
-
-**Composants Business :**
-- `KpiCard.tsx` — Card financiere (GlareCard + BentoGridItem + NumberTicker)
-- `KpiBentoGrid.tsx` — Grille 6 KPIs (stagger Motion 12)
-- `TaglineHeader.tsx` — Tagline avec AnimatedGradientText + next-intl
-- `MetadataChips.tsx` — Date + reading time + alert level chips
-- `BriefingPanel.tsx` — Briefing avec TextGenerateEffect + disclaimer legal
-- `FreshnessIndicator.tsx` — Dot pulsant + label "Live - Updated X min ago"
-- `RiskIndicator.tsx` — **Pulse Ring** (UX Amendment 001) — 4 etats (low/warning/alert/crisis)
-- `SecondaryKpisMarquee.tsx` — Ticker financier defilant (8 KPIs secondaires)
-- `HeroSection.tsx` — Assemblage complet Aurora + Ring + Tagline + Briefing + KPIs + Marquee
-
-**Data & Content :**
-- `src/data/fallback-analysis.json` — Donnees statiques demo valides
-- `src/data/mock-kpis.ts` — 6 KPIs primaires + 8 KPIs secondaires (STATIC_SECONDARY_KPIS)
-- `src/lib/content.ts` — `getLatestAnalysis()` SSR avec fallback R2 + emergency fallback + cache()
-- `src/app/[locale]/page.tsx` — Branche sur vraies donnees R2
-
----
-
-## Code Review Sprint 3 — Resultats
-
-8 patches appliques (0 decision_needed, 2 deferred) :
-
-| # | Severite | Fix |
-|---|----------|-----|
-| P1 | CRITICAL | `loadFallback()` emergency fallback — plus jamais de 500 |
-| P2 | HIGH | RiskIndicator reduced-motion — CSS keyframe override |
-| P3 | HIGH | AlertLevel type unifie (`calm` -> `low`) |
-| P5 | MEDIUM | `assert` -> `with` import syntax |
-| P6 | LOW | Invalid Date guards |
-| P7 | LOW | AnimatedGradientText double animation supprimee |
-| P8 | LOW | `getLatestAnalysis` wrappee avec `cache()` |
-| D1 | — | `MOCK_SECONDARY_KPIS` renomme `STATIC_SECONDARY_KPIS` |
-
-**Deferred Sprint 4 :** Intl.NumberFormat (AA-02), secondary KPIs from R2 (BH-15)
-
----
-
-## Security Audit Sprint 3
-
-| Gate | Resultat |
-|------|----------|
-| Gate 07 (Secrets) | PASS |
-| Gate 08 (Dependencies) | PASS — 0 CVE |
-| Gate TS (TypeScript strict) | PASS — 0 `any` |
-| Gate Hook (Pre-commit) | PASS |
-
----
-
-## Etat des stories — Cumul
+## Etat du projet
 
 | Epic | Stories | Points | Status |
 |------|---------|--------|--------|
 | Epic 1 — Foundation | 7/7 | 18 | DONE |
 | Epic 2 — Data Pipeline | 14/14 | 39 | DONE |
 | Epic 3 — Core UI Dashboard | 14/14 | 36 | DONE (reviewed + secured) |
-| **Total** | **35/35** | **93** | |
+| **Epic 4 ��� Rive Avatar & Coulisses** | **0/11** | **28** | **A FAIRE** |
+
+**Tests** : 224 passing | **Build** : 166 kB | **Security** : 4/4 gates PASS
 
 ---
 
-## Prochain : Sprint 4 — Rive Avatar & Coulisses (28 pts)
+## Sprint 4 — Scope (28 pts)
 
-Stories a definir. Focus :
-- Avatar Rive du Chartiste (animation interactive)
-- Page Coulisses (Behind the Scenes)
-- Integration pipeline live (R2 -> frontend)
+### Stories P0 (23 pts — obligatoires)
+
+| Story | Titre | Pts | Description |
+|-------|-------|-----|-------------|
+| 4.1 | Lottie icons library | 2 | `@dotlottie/react-player`, 5 animations, `LottieIcon` wrapper |
+| 4.2 | Rive avatar fallback SVG + setup | 3 | `@rive-app/react-canvas`, 4 SVG variants (low/medium/high/crisis), `HeroAvatar` |
+| 4.4 | Aceternity Tracing Beam | 3 | Scroll-following beam, reduced-motion respect |
+| 4.5 | Magic UI Dot Pattern | 1 | Background Coulisses page |
+| 4.6 | Aceternity Code Block Animated | 3 | Syntax highlighting, copy button + ShineBorder |
+| 4.7 | Magic UI Shine Border | 1 | Boutons interactifs |
+| 4.8 | TimelineStep + PromptCodeBlock | 3 | Timeline composant + wrapper prompt diffs |
+| 4.9 | PipelineLogsTable | 3 | Table shadcn, fetch R2 `runs-last-7.json` |
+| 4.10 | Content Coulisses MDX (5+ etapes) | 3 | Idee → BMAD → Pipeline → Prompts v01-v06 → Cloudflare |
+| 4.11 | page.tsx Coulisses | 1 | `/[locale]/coulisses` server component, assemblage |
+
+### Story P1 (5 pts — optionnelle, peut aller en V1.1)
+
+| Story | Titre | Pts | Description |
+|-------|-------|-----|-------------|
+| 4.3 | Rive avatar.riv asset | 5 | Fichier .riv < 120 KB, state machine risk levels |
+
+### Risques Sprint 4
+- **R1** : Creation Rive asset longue → SVG fallback suffit pour MVP
+- **R2** : Tracing Beam complexe avec scroll → fallback timeline statique
+
+### Definition of Done
+- [ ] Page Coulisses rendue avec 5+ etapes + Tracing Beam
+- [ ] Prompts v01-v06 dans CodeBlocks avec bouton copy
+- [ ] Pipeline logs table depuis R2
+- [ ] LottieIcons sur fleches KPI
+- [ ] Rive avatar OU fallback SVG actif
+
+---
+
+## Deferred de Sprint 3 (a integrer dans Sprint 4)
+
+- **AA-02** : `Intl.NumberFormat` pour formatage locale des KPIs (FR: `7 535,23`)
+- **BH-15** : Secondary KPIs depuis R2 au lieu de `STATIC_SECONDARY_KPIS`
+
+---
+
+## Fichiers de reference
+
+- Sprint plan : `docs/planning-artifacts/sprint-plan.md` (lignes 182-216)
+- Epics detail : `docs/planning-artifacts/epics.md` (section Epic 4, ligne 364+)
+- Story specs : a creer dans `docs/implementation-artifacts/`
+
+---
+
+## Consignes pour la prochaine session
+
+1. **Lire ce fichier** (`NEXT_SESSION.md`) pour reprendre le contexte
+2. **Creer les 11 story specs** dans `docs/implementation-artifacts/` (format habituel : Story/AC/Dev Notes/Dev Agent Record)
+3. **Dev batch** toutes les stories P0 d'abord (23 pts), puis P1 si le temps
+4. **A la fin du sprint** : code review (`bmad-code-review`) → security audit (`yieldfield-security-audit`) → commit + push + issue GitHub Bryan
+5. **Nouvelles deps a installer** : `@dotlottie/react-player`, `@rive-app/react-canvas`
+6. **Nouvelle page** : `src/app/[locale]/coulisses/page.tsx`
+7. **Ne pas oublier** les 2 deferred Sprint 3 (Intl.NumberFormat + secondary KPIs R2)
 
 ---
 
@@ -112,8 +94,8 @@ Stories a definir. Focus :
 
 ```
 Reprise YieldField. Epic 1+2+3 done (35 stories, 93 pts, 224 tests).
-Sprint 3 review + security done (commit c3ed47e, pushed, Issue #7 Bryan).
-Prochain : Sprint 4 — Rive Avatar & Coulisses (28 pts).
+Sprint 4 a demarrer : Rive Avatar & Coulisses (28 pts, 11 stories).
+On fait comme d'habitude : creer stories → dev batch → review + secu a la fin.
 Lire NEXT_SESSION.md.
 ```
 
