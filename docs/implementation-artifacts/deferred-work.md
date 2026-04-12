@@ -13,3 +13,10 @@ Géré automatiquement par `bmad-code-review`.
 - **`@types/node ^20` sans `@cloudflare/workers-types`** [`package.json:18`] — setup Cloudflare runtime types prévu lors du déploiement (Epic 7)
 - **`next.config.ts` vide — stratégie déploiement Cloudflare non définie** [`next.config.ts:3`] — output strategy à configurer en Epic 7 (static export ou @cloudflare/next-on-pages)
 - **`next/font/google` réseau requis au build** [`src/app/layout.tsx:2`] — risque acceptable en dev local; polices cachées par Next.js, à valider sur Cloudflare Pages CI en Epic 7
+
+---
+
+## Deferred from: Sprint 3 code review (2026-04-12) — à intégrer Sprint 4
+
+- **AA-02 — `Intl.NumberFormat` pour KPIs** [`src/components/dashboard/KpiCard.tsx`] — remplacer le formatage manuel par `new Intl.NumberFormat(locale, {...})` pour FR: `7 535,23` et EN: `7,535.23`. À intégrer dans Story 4.1 (modification KpiCard) ou story dédiée.
+- **BH-15 — Secondary KPIs depuis R2** [`src/components/dashboard/SecondaryKpisMarquee.tsx`] — remplacer `STATIC_SECONDARY_KPIS` par fetch depuis R2 `secondary-kpis.json`. À intégrer dans Story 4.9 (pattern R2 déjà établi) ou story dédiée.

@@ -8,6 +8,10 @@ vi.mock('@/hooks/usePrefersReducedMotion', () => ({
   usePrefersReducedMotion: () => true,
 }))
 
+vi.mock('@lottiefiles/dotlottie-react', () => ({
+  DotLottieReact: () => null,
+}))
+
 vi.stubGlobal('IntersectionObserver', class {
   observe() {}
   disconnect() {}
@@ -56,7 +60,10 @@ describe('KpiCard', () => {
     const { container } = render(<KpiCard kpi={mockBullKpi} />)
     const labeled = container.querySelector('[aria-label]')
     expect(labeled?.getAttribute('aria-label')).toContain('CAC 40')
-    expect(labeled?.getAttribute('aria-label')).toContain('+2.47%')
+    // Intl.NumberFormat locale-aware: fr-FR → +2,47% | en-US → +2.47%
+    const ariaLabel = labeled?.getAttribute('aria-label') ?? ''
+    expect(ariaLabel).toContain('CAC 40')
+    expect(ariaLabel).toMatch(/\+2[,.]47%/)
   })
 
   it('renders the KPI label', () => {

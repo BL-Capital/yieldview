@@ -1,6 +1,6 @@
 import { setRequestLocale } from 'next-intl/server'
 import type { Metadata } from 'next'
-import { getLatestAnalysis } from '@/lib/content'
+import { getLatestAnalysis, getSecondaryKpis } from '@/lib/content'
 import { HeroSection } from '@/components/dashboard/HeroSection'
 
 type Props = {
@@ -26,7 +26,10 @@ export default async function Home({ params }: Props) {
   const { locale } = await params
   setRequestLocale(locale)
 
-  const analysis = await getLatestAnalysis()
+  const [analysis, secondaryKpis] = await Promise.all([
+    getLatestAnalysis(),
+    getSecondaryKpis(),
+  ])
 
-  return <HeroSection analysis={analysis} locale={locale} />
+  return <HeroSection analysis={analysis} locale={locale} secondaryKpis={secondaryKpis} />
 }

@@ -68,13 +68,13 @@ export function RiskIndicator({ alertLevel, locale = 'fr' }: RiskIndicatorProps)
   return (
     <div
       className="relative flex items-center justify-center"
-      style={{ width: 120, height: 120 }}
+      style={{ width: 180, height: 180 }}
       aria-label={ariaLabel}
       role="img"
     >
       {/* Concentric rings */}
       {Array.from({ length: cfg.ringCount }, (_, i) => {
-        const size = 40 + i * 28
+        const size = 60 + i * 40
         const delayMs = i * 200
         return (
           <div
@@ -100,7 +100,7 @@ export function RiskIndicator({ alertLevel, locale = 'fr' }: RiskIndicatorProps)
       {/* Center dot */}
       <div
         aria-hidden="true"
-        className="absolute h-3 w-3 rounded-full"
+        className="absolute h-4 w-4 rounded-full"
         style={{ backgroundColor: cfg.color }}
       />
     </div>

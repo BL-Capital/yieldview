@@ -3,6 +3,7 @@ import type { Kpi } from '@/lib/schemas/kpi'
 import { BentoGridItem } from '@/components/aceternity/bento-grid-item'
 import { GlareCard } from '@/components/aceternity/glare-card'
 import { NumberTicker } from '@/components/magic-ui/number-ticker'
+import { LottieIcon } from '@/components/lottie/LottieIcon'
 
 interface KpiCardProps {
   kpi: Kpi
@@ -24,6 +25,15 @@ function formatValue(value: number, unit: string): { value: number; decimalPlace
   return { value, decimalPlaces: 2, prefix: '', suffix: unit ? ` ${unit}` : '' }
 }
 
+function formatChangePct(changePct: number, locale: string): string {
+  const sign = changePct >= 0 ? '+' : ''
+  const formatted = new Intl.NumberFormat(locale === 'en' ? 'en-US' : 'fr-FR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(Math.abs(changePct))
+  return `${sign}${changePct < 0 ? '-' : ''}${formatted}%`
+}
+
 const colSpanClass: Record<number, string> = {
   1: '',
   2: 'sm:col-span-2',
@@ -37,14 +47,14 @@ export function KpiCard({ kpi, locale = 'fr', className, colSpan = 1, isAlert = 
   const isBull = kpi.direction === 'up'
   const isBear = kpi.direction === 'down'
 
-  const changeSign = kpi.change_pct >= 0 ? '+' : ''
+  const formattedChangePct = formatChangePct(kpi.change_pct, locale)
   const changeColor = isBull
     ? 'bg-bull/20 text-bull border-bull/40'
     : isBear
       ? 'bg-bear/20 text-bear border-bear/40'
       : 'bg-yield-ink-muted/10 text-yield-ink-muted border-yield-ink-muted/30'
 
-  const ariaLabel = `${label} : ${kpi.value} ${kpi.unit}, variation ${changeSign}${kpi.change_pct.toFixed(2)}%`
+  const ariaLabel = `${label} : ${kpi.value} ${kpi.unit}, variation ${formattedChangePct}`
 
   return (
     <GlareCard className={cn(colSpanClass[colSpan] ?? '', className)}>
@@ -73,11 +83,17 @@ export function KpiCard({ kpi, locale = 'fr', className, colSpan = 1, isAlert = 
         {/* Change badge */}
         <span
           className={cn(
-            'mt-2 inline-flex items-center rounded-full border px-2 py-0.5 text-xs font-mono',
+            'mt-2 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-mono',
             changeColor,
           )}
         >
-          {isBull ? '▲' : isBear ? '▼' : '—'} {changeSign}{kpi.change_pct.toFixed(2)}%
+          <LottieIcon
+            src={isBull ? '/lottie/arrow-up.lottie' : isBear ? '/lottie/arrow-down.lottie' : '/lottie/arrow-neutral.lottie'}
+            size={20}
+            loop
+            autoplay
+          />
+          {formattedChangePct}
         </span>
       </BentoGridItem>
     </GlareCard>

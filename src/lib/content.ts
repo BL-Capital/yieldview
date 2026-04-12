@@ -1,7 +1,31 @@
 import { cache } from 'react'
+import { z } from 'zod'
 import { AnalysisSchema, type Analysis } from './schemas/analysis'
+import { STATIC_SECONDARY_KPIS, type SecondaryKpi } from '@/data/mock-kpis'
 
 const R2_BASE_URL = process.env['NEXT_PUBLIC_R2_PUBLIC_URL'] ?? ''
+
+const SecondaryKpiSchema = z.object({
+  label: z.string(),
+  value: z.number(),
+  change: z.number(),
+  unit: z.string().optional(),
+})
+
+export const getSecondaryKpis = cache(async (): Promise<SecondaryKpi[]> => {
+  if (!R2_BASE_URL) return STATIC_SECONDARY_KPIS
+  try {
+    const res = await fetch(`${R2_BASE_URL}/secondary-kpis.json`, {
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(5000),
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json: unknown = await res.json()
+    return z.array(SecondaryKpiSchema).parse(json)
+  } catch {
+    return STATIC_SECONDARY_KPIS
+  }
+})
 
 /**
  * Emergency fallback — used only when fallback-analysis.json is itself corrupted.

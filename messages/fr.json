@@ -49,5 +49,77 @@
   "LanguageSwitcher": {
     "fr": "Français",
     "en": "English"
+  },
+  "Coulisses": {
+    "title": "Les Coulisses de YieldField",
+    "subtitle": "Comment un chartiste virtuel est né d'une méthode, d'un pipeline et d'une obsession pour la clarté.",
+    "backToHome": "← Retour au dashboard",
+    "steps": {
+      "step1": {
+        "title": "L'idée originelle",
+        "date": "Janvier 2026",
+        "description": "Tout a commencé avec une question simple : pourquoi les gens ordinaires n'ont-ils pas accès à un vrai briefing financier quotidien ? Bryan, Product Owner passionné de marchés, voulait créer un magazine financier automatisé — beau, précis, accessible — sans les barrières des outils professionnels à 200€/mois.",
+        "quote": "Je voulais que ma grand-mère comprenne ce qui se passe sur les marchés ce matin."
+      },
+      "step2": {
+        "title": "La méthode BMAD",
+        "date": "Février 2026",
+        "description": "Pour structurer le projet, nous avons adopté BMAD v6.3.0 — une méthodologie agile IA qui transforme une vision produit en stories implémentables. De l'Analyst au PM, de l'Architect au Dev : chaque agent a son rôle, chaque story a ses critères d'acceptance. 6 semaines pour livrer 35 stories, 93 points, 224 tests.",
+        "diagramAlt": "Workflow BMAD : Analyst → PM → Architect → Dev → Review"
+      },
+      "step3": {
+        "title": "Le pipeline nocturne",
+        "date": "Mars 2026",
+        "description": "Chaque nuit à 2h UTC, GitHub Actions orchestre la magie : collecte des données (Finnhub, FRED, Alpha Vantage), calcul du VIX percentile, appel à Claude Sonnet pour générer le briefing bilingue, publication sur Cloudflare R2. Le matin, les données sont fraîches et prêtes.",
+        "diagramAlt": "Pipeline : GitHub Actions → APIs → Claude → R2 → Site"
+      },
+      "step4": {
+        "title": "De v01 à v06 : l'art du prompt",
+        "date": "Mars – Avril 2026",
+        "description": "Six itérations pour transformer un prompt générique en un chartiste virtuel avec une vraie personnalité. Chaque version a apporté plus de structure, de contexte sectoriel, et de nuance éditoriale. Voici l'évolution complète."
+      },
+      "step5": {
+        "title": "Déploiement Cloudflare",
+        "date": "Avril 2026",
+        "description": "Next.js 15 sur Cloudflare Pages — 8€/mois tout compris. Bundle de 166 kB, rendu SSR/ISR, données revalidées toutes les heures. 224 tests, 4 security gates, zéro compromis sur la performance.",
+        "metrics": "166 kB bundle · 224 tests · 8€/mois · 4/4 security gates"
+      }
+    },
+    "prompts": {
+      "v01": {
+        "label": "v01",
+        "notes": "Premier jet — trop générique, pas de personnalité",
+        "code": "Analyse les marchés financiers d'aujourd'hui et donne un résumé en français. Inclus le CAC 40, le S&P 500 et le VIX.\n\nDonnées : {data}"
+      },
+      "v02": {
+        "label": "v02",
+        "notes": "Ajout du rôle d'analyste — meilleur cadrage",
+        "code": "Tu es un analyste financier senior. Analyse les marchés d'aujourd'hui et produis un briefing professionnel en français.\n\nConcentre-toi sur : CAC 40, S&P 500, VIX, Or, Pétrole.\nTon : professionnel, factuel, accessible.\n\nDonnées : {data}"
+      },
+      "v03": {
+        "label": "v03",
+        "notes": "Ajout structure JSON + niveau d'alerte VIX",
+        "code": "Tu es un analyste financier senior. Produis un briefing JSON structuré.\n\nSi VIX > percentile 90 (252j) → alert_level: 'alert'\nSi VIX > percentile 75 → alert_level: 'warning'\nSinon → alert_level: 'low'\n\nFormat de sortie :\n{\n  \"briefing\": { \"fr\": \"...\", \"en\": \"...\" },\n  \"tagline\": { \"fr\": \"...\", \"en\": \"...\" },\n  \"alert_level\": \"low|warning|alert|crisis\"\n}\n\nDonnées : {data}"
+      },
+      "v04": {
+        "label": "v04",
+        "notes": "Ajout ton éditorial + thème du jour",
+        "code": "Tu es Le Chartiste — analyste financier virtuel de YieldField. Ton style : magazine premium, factuel mais accessible, jamais alarmiste sauf si les données le justifient.\n\nProduis un briefing JSON avec :\n- Briefing FR/EN (150-200 mots chacun)\n- Tagline du jour (percutante, max 10 mots)\n- Thème du jour (le fait saillant)\n- Niveau d'alerte basé sur VIX percentile\n- Métadonnées : certitude, événement à venir\n\nDonnées : {data}"
+      },
+      "v05": {
+        "label": "v05",
+        "notes": "Chain-of-thought interne + validation schema Zod",
+        "code": "Tu es Le Chartiste — analyste financier virtuel de YieldField.\n\n<thinking>\nAnalyse les données step by step :\n1. Tendance principale (indices)\n2. Signal de peur (VIX)\n3. Refuge (Or)\n4. Énergie (Pétrole)\n5. Corrélations notables\n6. Risque global : low/warning/alert/crisis\n</thinking>\n\nProduis UNIQUEMENT le JSON final. Pas de texte avant ou après.\nValide que tous les champs requis sont présents.\n\nDonnées : {data}"
+      },
+      "v06": {
+        "label": "v06",
+        "notes": "Version production — personnalité complète + sortie bilingue stricte",
+        "code": "Tu es Le Chartiste, la voix analytique de YieldField.\n\nTon mandat : transformer des données brutes en intelligence éditoriale.\nTon style : Hemingway des marchés — phrases courtes, faits précis, pas de jargon inutile.\nTon audience : investisseurs individuels avertis + curieux éclairés.\n\n<thinking>\nÉtape 1 : Lire toutes les données\nÉtape 2 : Identifier le fait dominant du jour\nÉtape 3 : Calculer le niveau de risque (VIX percentile)\nÉtape 4 : Rédiger le briefing FR puis EN (adaptation culturelle, pas traduction)\nÉtape 5 : Générer la tagline qui capture l'essence\nÉtape 6 : Valider la cohérence des niveaux d'alerte\n</thinking>\n\nRègle absolue : output JSON uniquement, valide selon le schéma ci-dessous.\nPas de markdown, pas d'explication, pas de commentaire.\n\nSchéma : {schema}\nDonnées : {data}"
+      }
+    },
+    "logsSection": {
+      "title": "Pipeline en temps réel",
+      "description": "Les 7 dernières exécutions du pipeline nocturne."
+    }
   }
 }

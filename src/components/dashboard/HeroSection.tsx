@@ -1,6 +1,8 @@
 import { cn } from '@/lib/utils'
 import type { Analysis } from '@/lib/schemas/analysis'
 import { AuroraWithBeams } from '@/components/aceternity/aurora-with-beams'
+import { HeroAvatar } from '@/components/rive/HeroAvatar'
+import type { RiskLevel } from '@/components/rive/HeroAvatar'
 import { RiskIndicator } from './RiskIndicator'
 import { TaglineHeader } from './TaglineHeader'
 import { MetadataChips } from './MetadataChips'
@@ -8,11 +10,12 @@ import { BriefingPanel } from './BriefingPanel'
 import { FreshnessIndicator } from './FreshnessIndicator'
 import { KpiBentoGrid } from './KpiBentoGrid'
 import { SecondaryKpisMarquee } from './SecondaryKpisMarquee'
-import { STATIC_SECONDARY_KPIS } from '@/data/mock-kpis'
+import type { SecondaryKpi } from '@/data/mock-kpis'
 
 interface HeroSectionProps {
   analysis: Analysis
   locale: string
+  secondaryKpis: SecondaryKpi[]
 }
 
 // Map analysis alert level → RiskIndicator alert level
@@ -25,6 +28,14 @@ function mapAlertLevel(
   if (lvl === 'alert') return 'alert'
   if (lvl === 'crisis') return 'crisis'
   return 'low'
+}
+
+// Map alertLevel → RiskLevel pour HeroAvatar
+function mapToRiskLevel(alertLevel: 'low' | 'warning' | 'alert' | 'crisis' | null): RiskLevel {
+  if (!alertLevel || alertLevel === 'low') return 'low'
+  if (alertLevel === 'warning') return 'medium'
+  if (alertLevel === 'alert') return 'high'
+  return 'crisis'
 }
 
 // Map analysis risk_level → FreshnessLevel
@@ -44,7 +55,7 @@ const DISCLAIMER: Record<string, string> = {
   en: 'The information presented is for informational purposes only and does not constitute investment advice.',
 }
 
-export function HeroSection({ analysis, locale }: HeroSectionProps) {
+export function HeroSection({ analysis, locale, secondaryKpis }: HeroSectionProps) {
   const alertLevel = mapAlertLevel(analysis)
   const freshnessLevel = mapFreshnessLevel(analysis)
   const publishedAt = analysis.generated_at
@@ -53,7 +64,10 @@ export function HeroSection({ analysis, locale }: HeroSectionProps) {
   return (
     <AuroraWithBeams alertLevel={alertLevel} className="min-h-screen">
       <div className={cn('flex flex-col items-center px-4 py-16 sm:py-24 gap-8 sm:gap-10')}>
-        {/* 1. Risk Indicator */}
+        {/* 1. Hero Avatar */}
+        <HeroAvatar riskLevel={mapToRiskLevel(alertLevel)} className="mb-2" />
+
+        {/* 2. Risk Indicator */}
         <RiskIndicator alertLevel={alertLevel} locale={locale} />
 
         {/* 2. Tagline */}
@@ -93,7 +107,7 @@ export function HeroSection({ analysis, locale }: HeroSectionProps) {
         </div>
 
         {/* 7. Secondary KPIs Marquee */}
-        <SecondaryKpisMarquee kpis={STATIC_SECONDARY_KPIS} />
+        <SecondaryKpisMarquee kpis={secondaryKpis} />
 
         {/* 8. CTA Coulisses */}
         <a

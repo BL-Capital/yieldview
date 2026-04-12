@@ -8,6 +8,10 @@ vi.mock('@/hooks/usePrefersReducedMotion', () => ({
   usePrefersReducedMotion: () => true,
 }))
 
+vi.mock('@lottiefiles/dotlottie-react', () => ({
+  DotLottieReact: () => null,
+}))
+
 vi.stubGlobal('IntersectionObserver', class {
   observe() {}
   disconnect() {}

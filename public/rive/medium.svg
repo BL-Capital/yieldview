@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120" fill="none">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="56" fill="#0F1923" stroke="#F59E0B" stroke-width="2" opacity="0.9"/>
+  <!-- Face -->
+  <circle cx="60" cy="52" r="26" fill="#1A2733"/>
+  <!-- Eyes - focused/alert -->
+  <ellipse cx="50" cy="47" rx="4.5" ry="4" fill="#F59E0B"/>
+  <ellipse cx="70" cy="47" rx="4.5" ry="4" fill="#F59E0B"/>
+  <!-- Pupils -->
+  <circle cx="50" cy="47" r="2" fill="#0F1923"/>
+  <circle cx="70" cy="47" r="2" fill="#0F1923"/>
+  <!-- Eyebrows - slightly furrowed -->
+  <path d="M45 41 Q50 38 55 41" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <path d="M65 41 Q70 38 75 41" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" fill="none"/>
+  <!-- Neutral mouth -->
+  <line x1="50" y1="62" x2="70" y2="62" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Level indicator dots - medium -->
+  <circle cx="44" cy="88" r="5" fill="#F59E0B" opacity="0.9"/>
+  <circle cx="60" cy="88" r="5" fill="#F59E0B" opacity="0.9"/>
+  <circle cx="76" cy="88" r="5" fill="#F59E0B" opacity="0.3"/>
+</svg>

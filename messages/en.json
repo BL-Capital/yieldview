@@ -49,5 +49,53 @@
   "LanguageSwitcher": {
     "fr": "Français",
     "en": "English"
+  },
+  "Coulisses": {
+    "title": "Behind YieldField",
+    "subtitle": "How a virtual chartist was born from a method, a pipeline, and an obsession with clarity.",
+    "backToHome": "← Back to dashboard",
+    "steps": {
+      "step1": {
+        "title": "The Original Idea",
+        "date": "January 2026",
+        "description": "It all started with a simple question: why don't ordinary people have access to a real daily financial briefing? Bryan, a Product Owner passionate about markets, wanted to create an automated financial magazine — beautiful, accurate, accessible — without the barriers of professional tools at €200/month.",
+        "quote": "I wanted my grandmother to understand what's happening in the markets this morning."
+      },
+      "step2": {
+        "title": "The BMAD Method",
+        "date": "February 2026",
+        "description": "To structure the project, we adopted BMAD v6.3.0 — an AI agile methodology that transforms a product vision into implementable stories. From Analyst to PM, from Architect to Dev: each agent has its role, each story has its acceptance criteria. 6 weeks to deliver 35 stories, 93 points, 224 tests.",
+        "diagramAlt": "BMAD Workflow: Analyst → PM → Architect → Dev → Review"
+      },
+      "step3": {
+        "title": "The Nightly Pipeline",
+        "date": "March 2026",
+        "description": "Every night at 2am UTC, GitHub Actions orchestrates the magic: data collection (Finnhub, FRED, Alpha Vantage), VIX percentile calculation, Claude Sonnet call to generate the bilingual briefing, publication to Cloudflare R2. By morning, the data is fresh and ready.",
+        "diagramAlt": "Pipeline: GitHub Actions → APIs → Claude → R2 → Site"
+      },
+      "step4": {
+        "title": "From v01 to v06: The Art of Prompting",
+        "date": "March – April 2026",
+        "description": "Six iterations to transform a generic prompt into a virtual chartist with a real personality. Each version brought more structure, sector context, and editorial nuance. Here is the complete evolution."
+      },
+      "step5": {
+        "title": "Cloudflare Deployment",
+        "date": "April 2026",
+        "description": "Next.js 15 on Cloudflare Pages — €8/month all-in. 166 kB bundle, SSR/ISR rendering, data revalidated every hour. 224 tests, 4 security gates, zero performance compromise.",
+        "metrics": "166 kB bundle · 224 tests · €8/month · 4/4 security gates"
+      }
+    },
+    "prompts": {
+      "v01": { "label": "v01", "notes": "First draft — too generic, no personality" },
+      "v02": { "label": "v02", "notes": "Added analyst role — better framing" },
+      "v03": { "label": "v03", "notes": "Added JSON structure + VIX alert level" },
+      "v04": { "label": "v04", "notes": "Added editorial tone + theme of the day" },
+      "v05": { "label": "v05", "notes": "Internal chain-of-thought + Zod schema validation" },
+      "v06": { "label": "v06", "notes": "Production version — full personality + strict bilingual output" }
+    },
+    "logsSection": {
+      "title": "Live Pipeline",
+      "description": "The last 7 executions of the nightly pipeline."
+    }
   }
 }
