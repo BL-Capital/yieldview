@@ -35,7 +35,7 @@ development_status:
   epic-2: in-progress
   # Sprint 2a — Data ingestion & alerts (20 pts)
   2-1-schemas-zod: review
-  2-2-client-finnhub: in-progress
+  2-2-client-finnhub: review
   2-3-client-fred: backlog
   2-4-client-alpha-vantage: backlog
   2-5-script-fetch-data-fallback: backlog
