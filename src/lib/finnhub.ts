@@ -110,7 +110,7 @@ async function withRetry<T>(
 // ─── Core fetch ──────────────────────────────────────────────────────────────
 
 async function finnhubFetch<T>(path: string): Promise<T> {
-  const key = process.env.FINNHUB_API_KEY;
+  const key = process.env['FINNHUB_API_KEY'];
   if (!key) {
     throw new FinnhubError(
       'FINNHUB_API_KEY is not set. Add it to your environment variables.',
@@ -119,7 +119,7 @@ async function finnhubFetch<T>(path: string): Promise<T> {
   }
 
   const url = `${FINNHUB_BASE_URL}${path}&token=${key}`;
-  const res = await fetch(url);
+  const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
 
   if (!res.ok) {
     throw new FinnhubError(`Finnhub HTTP ${res.status}: ${res.statusText}`, res.status);

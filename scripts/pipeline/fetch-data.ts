@@ -78,7 +78,7 @@ async function fetchR2Fallback(failedSource: 'finnhub' | 'fred'): Promise<Kpi[]>
 
   log('warn', 'fallback R2 activé', { source: failedSource });
 
-  const res = await fetch(`${baseUrl}/latest.json`);
+  const res = await fetch(`${baseUrl}/latest.json`, { signal: AbortSignal.timeout(10_000) });
   if (!res.ok) {
     throw new PipelineError(`R2 fallback HTTP ${res.status}`, 'r2');
   }
@@ -123,15 +123,29 @@ export async function fetchAllMarketData(): Promise<{
     fetchFredData(),
   ]);
 
-  const finnhub =
-    finnhubResult.status === 'fulfilled'
-      ? finnhubResult.value
-      : { fallback: await fetchR2Fallback('finnhub') };
+  let finnhub: FinnhubResults | { fallback: Kpi[] };
+  if (finnhubResult.status === 'fulfilled') {
+    finnhub = finnhubResult.value;
+  } else {
+    try {
+      finnhub = { fallback: await fetchR2Fallback('finnhub') };
+    } catch (err) {
+      log('error', 'Finnhub + R2 fallback both failed', { error: String(err) });
+      finnhub = { fallback: [] };
+    }
+  }
 
-  const fred =
-    fredResult.status === 'fulfilled'
-      ? fredResult.value
-      : { fallback: await fetchR2Fallback('fred') };
+  let fred: FredResults | { fallback: Kpi[] };
+  if (fredResult.status === 'fulfilled') {
+    fred = fredResult.value;
+  } else {
+    try {
+      fred = { fallback: await fetchR2Fallback('fred') };
+    } catch (err) {
+      log('error', 'FRED + R2 fallback both failed', { error: String(err) });
+      fred = { fallback: [] };
+    }
+  }
 
   return { finnhub, fred };
 }
@@ -249,8 +263,8 @@ export async function buildKpis(): Promise<{ kpis: Kpi[]; fetchedAt: string }> {
     }
   }
 
-  // Compute spreads if we have FRED values
-  if (oat !== 0 || bund !== 0 || us !== 0) {
+  // Compute spreads only if we have ALL three FRED values
+  if (oat !== 0 && bund !== 0 && us !== 0) {
     const spreads = computeSpreads(oat, bund, us, fredFreshness, fredTimestamp);
     rawKpis.push(toKpi('spread_oat_bund', spreads.spread_oat_bund));
     rawKpis.push(toKpi('spread_bund_us', spreads.spread_bund_us));

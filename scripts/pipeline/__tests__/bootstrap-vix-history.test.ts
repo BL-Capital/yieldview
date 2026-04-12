@@ -84,15 +84,14 @@ describe('parseCandles', () => {
     expect(result[0].value).toBe(16.56);
   });
 
-  it('handles undefined c value by defaulting to 0', () => {
+  it('throws on mismatched t/c array lengths', () => {
     const data = {
       s: 'ok',
       t: [1712000000],
       c: [] as number[],
       h: [], l: [], o: [], v: [],
     };
-    const result = parseCandles(data);
-    expect(result[0].value).toBe(0);
+    expect(() => parseCandles(data)).toThrow('mismatch');
   });
 });
 

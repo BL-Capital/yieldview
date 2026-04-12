@@ -84,10 +84,17 @@ export function loadHistory(filePath: string = VIX_HISTORY_PATH): VixPoint[] {
     throw new AlertComputeError('vix-history.json must be an array');
   }
 
-  const points = raw as VixPoint[];
+  // Validate each element has the expected shape
+  const points = (raw as unknown[]).filter(
+    (item): item is VixPoint =>
+      typeof item === 'object' && item !== null &&
+      typeof (item as VixPoint).date === 'string' &&
+      typeof (item as VixPoint).value === 'number' &&
+      Number.isFinite((item as VixPoint).value),
+  );
   if (points.length < 10) {
     throw new AlertComputeError(
-      `Insufficient history: need at least 10 points, got ${points.length}`,
+      `Insufficient history: need at least 10 valid points, got ${points.length}`,
     );
   }
 

@@ -39,6 +39,9 @@ function log(level: 'info' | 'warn' | 'error', msg: string, extra?: Record<strin
 // ─── Candle fetch ─────────────────────────────────────────────────────────────
 
 export function parseCandles(data: FinnhubCandleRaw): VixPoint[] {
+  if (data.t.length !== data.c.length) {
+    throw new BootstrapError(`Candle data mismatch: t[${data.t.length}] vs c[${data.c.length}]`);
+  }
   return data.t.map((ts, i) => ({
     date: new Date(ts * 1000).toISOString().slice(0, 10),
     value: Math.round((data.c[i] ?? 0) * 100) / 100,
@@ -68,13 +71,20 @@ export async function fetchVixCandles(from: number, to: number): Promise<VixPoin
 
   for (let attempt = 1; attempt <= 3; attempt++) {
     try {
-      const res = await fetch(url);
-      if (!res.ok) throw new BootstrapError(`Finnhub HTTP ${res.status}`);
+      const res = await fetch(url, { signal: AbortSignal.timeout(15_000) });
+      if (!res.ok) {
+        const err = new BootstrapError(`Finnhub HTTP ${res.status}`);
+        // No retry on 4xx (except 429) — same pattern as finnhub.ts
+        if (res.status >= 400 && res.status < 500 && res.status !== 429) throw err;
+        throw err;
+      }
       const data = (await res.json()) as FinnhubCandleRaw;
       if (data.s !== 'ok') throw new BootstrapError(`Finnhub candle status: ${data.s}`);
       return parseCandles(data);
     } catch (err) {
       lastError = err as Error;
+      // Don't retry on non-retryable errors (4xx except 429)
+      if (err instanceof BootstrapError && err.message.includes('HTTP 4') && !err.message.includes('429')) throw err;
       if (attempt < 3) await new Promise((r) => setTimeout(r, delays[attempt - 1]));
     }
   }

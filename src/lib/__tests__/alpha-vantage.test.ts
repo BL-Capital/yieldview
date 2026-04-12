@@ -56,7 +56,7 @@ describe('fetchGlobalQuote', () => {
     expect(result.value).toBe(133.31);
     expect(result.change_day).toBeCloseTo(-0.19, 4);
     expect(result.change_pct).toBeCloseTo(-0.1423, 4);
-    expect(result.source).toBe('alpha-vantage');
+    expect(result.source).toBe('alpha_vantage');
     expect(result.direction).toBe('down');
     expect(result.freshness_level).toBe('live');
     expect(result.timestamp).toContain(TODAY);

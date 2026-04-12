@@ -147,7 +147,7 @@ describe('fetchAllMarketData', () => {
 
     const { finnhub } = await fetchAllMarketData();
     expect('fallback' in finnhub).toBe(true);
-    expect(mockFetch).toHaveBeenCalledWith('https://cdn.example.com/latest.json');
+    expect(mockFetch).toHaveBeenCalledWith('https://cdn.example.com/latest.json', expect.any(Object));
   });
 
   it('activates R2 fallback when FRED fails', async () => {
@@ -165,7 +165,7 @@ describe('fetchAllMarketData', () => {
     expect('fallback' in fred).toBe(true);
   });
 
-  it('throws PipelineError when R2 is also unavailable', async () => {
+  it('returns empty fallback when R2 is also unavailable', async () => {
     mockFetchVIX.mockRejectedValue(new Error('Finnhub down'));
     mockFetchDXY.mockRejectedValue(new Error('Finnhub down'));
     mockFetchIndices.mockRejectedValue(new Error('Finnhub down'));
@@ -175,10 +175,12 @@ describe('fetchAllMarketData', () => {
 
     mockFetch.mockResolvedValueOnce({ ok: false, status: 503, json: async () => ({}) });
 
-    await expect(fetchAllMarketData()).rejects.toThrow(PipelineError);
+    const { finnhub } = await fetchAllMarketData();
+    expect('fallback' in finnhub).toBe(true);
+    expect((finnhub as { fallback: unknown[] }).fallback).toEqual([]);
   });
 
-  it('throws PipelineError when R2_PUBLIC_URL is missing', async () => {
+  it('returns empty fallback when R2_PUBLIC_URL is missing', async () => {
     delete process.env['R2_PUBLIC_URL'];
     mockFetchVIX.mockRejectedValue(new Error('Finnhub down'));
     mockFetchDXY.mockRejectedValue(new Error('Finnhub down'));
@@ -187,7 +189,9 @@ describe('fetchAllMarketData', () => {
     mockFetchBund.mockResolvedValue(makeFredResult(2.91));
     mockFetchUS10Y.mockResolvedValue(makeFredResult(4.38));
 
-    await expect(fetchAllMarketData()).rejects.toThrow('R2_PUBLIC_URL is not set');
+    const { finnhub } = await fetchAllMarketData();
+    expect('fallback' in finnhub).toBe(true);
+    expect((finnhub as { fallback: unknown[] }).fallback).toEqual([]);
   });
 });
 

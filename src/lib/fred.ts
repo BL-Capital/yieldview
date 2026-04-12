@@ -86,14 +86,14 @@ function parseObservations(observations: FredObservation[]): FredSeriesResult {
 // ─── Core fetch ──────────────────────────────────────────────────────────────
 
 async function fredFetch(seriesId: string): Promise<FredSeriesResult> {
-  const key = process.env.FRED_API_KEY;
+  const key = process.env['FRED_API_KEY'];
   if (!key) {
     throw new FredError('FRED_API_KEY is not set. Add it to your environment variables.', 0);
   }
 
   // limit=5 to ensure we get at least 2 valid values after filtering "." (long weekends)
   const url = `${FRED_BASE_URL}/series/observations?series_id=${seriesId}&limit=5&sort_order=desc&api_key=${key}&file_type=json`;
-  const res = await fetch(url);
+  const res = await fetch(url, { signal: AbortSignal.timeout(10_000) });
 
   if (!res.ok) {
     throw new FredError(`FRED HTTP ${res.status}: ${res.statusText}`, res.status);
