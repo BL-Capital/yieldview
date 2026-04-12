@@ -1,0 +1,172 @@
+# YieldField — BMAD Workflow Status
+# Version: 2.0 (refaite après upgrade BMAD v6.0 → v6.3.0)
+# Updated: 2026-04-11
+
+project_name: "YieldField"
+project_type: "web-app"
+project_level: 3  # Upgraded from 2 → 3 after PRD analysis (18-23 stories actually 57)
+bmad_version: "v6.3.0"
+upgraded_at: "2026-04-11T22:00:00Z"
+initialized_at: "2026-04-06T19:00:00Z"
+
+phases:
+  phase_1_discovery:
+    name: "Discovery & Ideation"
+    status: "completed"
+    workflows:
+      product_brief:
+        status: "completed"
+        artifact: "docs/planning-artifacts/product-brief-yieldfield.md"
+        methodology: "bmad-product-brief v6.3.0 (5 stages, 3 parallel reviewers)"
+        completed_at: "2026-04-11T17:30:00Z"
+      brainstorm:
+        status: "skipped"
+        artifact: null
+        completed_at: null
+      research:
+        status: "embedded_in_product_brief"
+        artifact: "web research integrated into product-brief Stage 2"
+        completed_at: "2026-04-11T17:00:00Z"
+
+  phase_2_definition:
+    name: "Product Definition"
+    status: "completed"
+    workflows:
+      prd:
+        status: "completed"
+        artifact: "docs/planning-artifacts/prd.md"
+        methodology: "bmad-create-prd v6.3.0 (12 steps synthesized)"
+        stats: "54 FRs + 23 NFRs, 70 Must Haves, 7 capability areas, Level 3"
+        completed_at: "2026-04-11T19:00:00Z"
+        previous_artifacts:
+          - "docs/PRD_BMAD_Site_Finance_Bryan_v1.0.docx (Emmanuel initial)"
+          - "docs/PRD_BMAD_Site_Finance_Bryan_v1.1.docx (Bryan recommendations)"
+      tech_spec:
+        status: "not_needed"
+        artifact: null
+        rationale: "Level 3 project, PRD + Architecture cover the need"
+        completed_at: null
+
+  phase_3_solutioning:
+    name: "Solutioning (Architecture + UX Design)"
+    status: "completed"
+    workflows:
+      architecture:
+        status: "completed"
+        artifact: "docs/planning-artifacts/architecture.md"
+        methodology: "bmad-create-architecture v6.3.0 (8 steps synthesized)"
+        stats: "14 decisions, 7 patterns, 14 risks, 43-step implementation sequence"
+        completed_at: "2026-04-11T20:00:00Z"
+      ux_design:
+        status: "completed"
+        artifact: "docs/planning-artifacts/ux-design-specification.md"
+        methodology: "bmad-create-ux-design v6.3.0 (14 steps COMPLETE + Annexe Experience Maximum)"
+        stats: "14 steps, 4 emotional personas, 6 inspiration refs, 3 design directions, 7 signature moments"
+        completed_at: "2026-04-11T21:00:00Z"
+      component_catalog:
+        status: "completed"
+        artifact: "docs/planning-artifacts/component-catalog.md"
+        methodology: "Custom (naming catalog for implementation bible)"
+        stats: "13 shadcn P0 + 9 Aceternity P0 + 8 Magic UI P0 + Rive spec + 5 Lottie P0"
+        completed_at: "2026-04-11T21:30:00Z"
+      solutioning_gate_check:
+        status: "completed"
+        artifact: "docs/planning-artifacts/implementation-readiness-report-2026-04-11.md"
+        methodology: "bmad-check-implementation-readiness v6.3.0 (6 steps synthesized)"
+        verdict: "GO for Sprint 1 Implementation"
+        readiness_score: "87/100"
+        gaps_identified: 5
+        gaps_severity: "4 MINEUR + 1 MAJEUR (Sprint 2 density)"
+        corrective_actions_before_sprint_1:
+          - "Fix counting errors in epics.md header (28 → 68 stories, 142 → 171 pts)"
+          - "Fix Epic 2 total points (32 → 39) and Epic 5 total points (24 → 26)"
+          - "Fix sprint-plan.md header (57 → 68 stories, 142 → 171 pts)"
+          - "Add Story 3.14 — Business: SecondaryKpisMarquee integration (2 points)"
+          - "Recalibrate Sprint 2 (39 pts real vs 32 declared) — split, reduce scope, or accept risk"
+        completed_at: "2026-04-11T23:00:00Z"
+
+  phase_4_implementation:
+    name: "Implementation"
+    status: "ready_to_start"
+    workflows:
+      create_epics_and_stories:
+        status: "completed"
+        artifact: "docs/planning-artifacts/epics.md"
+        methodology: "bmad-create-epics-and-stories v6.3.0"
+        stats: "7 epics, 57 stories, 142 Fibonacci points"
+        completed_at: "2026-04-11T22:00:00Z"
+      sprint_planning:
+        status: "completed"
+        artifact: "docs/planning-artifacts/sprint-plan.md"
+        sprint_status: "docs/planning-artifacts/sprint-status.yaml"
+        methodology: "bmad-sprint-planning v6.3.0"
+        stats: "7 sprints x 1 week (4 core + 1 stabilization + 1 launch + buffer)"
+        completed_at: "2026-04-11T22:00:00Z"
+      create_story:
+        status: "not_started"
+        artifact: null
+        rationale: "First sprint story will be created at sprint 1 kickoff"
+        completed_at: null
+      dev_story:
+        status: "not_started"
+        artifact: null
+        completed_at: null
+
+current_phase: "phase_4_implementation"
+next_recommended_workflow: "bmad-check-implementation-readiness (Gate Check) → bmad-create-story for Story 1.1"
+
+validation_gate:
+  status: "pending_bryan_review"
+  github_issue: "BL-Capital/yieldview#3"
+  assignee: "SupraPirox (Bryan)"
+  blocking_issues:
+    - "Issue #2 (domain name decision) — blocks Story 7.1"
+  created_at: "2026-04-11T22:15:00Z"
+
+team:
+  lead_architect_and_dev: "Emmanuel (WEDOOALL Solutions) + Claude Code"
+  product_owner_level_2: "Bryan (SupraPirox)"
+  facilitator: "Claude (Opus 4.6 with 1M context, playing BMAD agent roles)"
+
+methodology_notes:
+  upgrade_history:
+    - version: "v6.0.0"
+      installed_at: "2026-03-31T17:37:00+02:00"
+      artifacts_produced: 4
+      artifacts_archived: "not archived, deleted in upgrade"
+    - version: "v6.3.0"
+      installed_at: "2026-04-11T21:29:00+02:00"
+      installation_method: "Official installer via npm"
+      installer_flags: "--modules bmm --tools claude-code --yes"
+      artifacts_produced: 8
+  v6_0_backups: "~/_bmad-archives/v6.0-backups/"
+
+hypotheses_to_validate:
+  - id: "H1"
+    description: "Marc (analyste sell-side) has a real pain point around morning briefings"
+    validation_plan: "5 user interviews + Twitter poll in week 1-2"
+    validation_threshold: "≥ 3/5 confirm → validated; else Marc demoted to secondary persona"
+    blocking: false
+
+open_questions:
+  - id: "Q1"
+    topic: "Domain name"
+    description: "yieldview.io / curvelab.io / ratepulse.io / yieldfield.io"
+    owner: "Bryan"
+    github_issue: "#2"
+    blocks: ["Story 7.1 (DNS + HTTPS setup)"]
+  - id: "Q2"
+    topic: "Legal review budget"
+    description: "~500€ estimated, to confirm with lawyer"
+    owner: "Emmanuel"
+    blocks: ["Story 7.2"]
+  - id: "Q3"
+    topic: "Override notification channel"
+    description: "Email + GitHub PR link? Slack webhook? Custom dashboard?"
+    owner: "Bryan"
+    blocks: []
+  - id: "Q4"
+    topic: "Prompt rotation cadence"
+    description: "Weekly? Conditional on bugs?"
+    owner: "Emmanuel"
+    blocks: []
