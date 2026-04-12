@@ -3,6 +3,7 @@ import type { Analysis } from '@/lib/schemas/analysis'
 import { AuroraWithBeams } from '@/components/aceternity/aurora-with-beams'
 import { HeroAvatar } from '@/components/rive/HeroAvatar'
 import type { RiskLevel } from '@/components/rive/HeroAvatar'
+import { AlertBanner } from '@/components/alerts/AlertBanner'
 import { RiskIndicator } from './RiskIndicator'
 import { TaglineHeader } from './TaglineHeader'
 import { MetadataChips } from './MetadataChips'
@@ -64,6 +65,17 @@ export function HeroSection({ analysis, locale, secondaryKpis }: HeroSectionProp
   return (
     <AuroraWithBeams alertLevel={alertLevel} className="min-h-screen">
       <div className={cn('flex flex-col items-center px-4 py-16 sm:py-24 gap-8 sm:gap-10')}>
+        {/* 0. Alert Banner (conditional) */}
+        {analysis.alert.active && analysis.alert.level && (
+          <AlertBanner
+            level={analysis.alert.level}
+            vix={analysis.alert.vix_current}
+            percentile={analysis.alert.vix_p90_252d}
+            triggeredAt={analysis.alert.triggered_at}
+            locale={locale}
+          />
+        )}
+
         {/* 1. Hero Avatar */}
         <HeroAvatar riskLevel={mapToRiskLevel(alertLevel)} className="mb-2" />
 

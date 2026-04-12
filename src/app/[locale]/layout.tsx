@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -5,6 +6,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
+import { buildMetadata } from "@/lib/metadata";
 
 type Props = {
   children: React.ReactNode;
@@ -13,6 +15,15 @@ type Props = {
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  return buildMetadata(locale);
 }
 
 export default async function LocaleLayout({ children, params }: Props) {
