@@ -1,118 +1,122 @@
-# NEXT_SESSION — YieldField Sprint 3 DONE → Review + Security
+# NEXT_SESSION — YieldField Sprint 3 DONE + Reviewed → Sprint 4
 
-**Dernière mise à jour :** 2026-04-12
-**Phase BMAD :** Phase 4 Implementation — **Sprint 3 dev terminé, prêt pour review**
+**Derniere mise a jour :** 2026-04-12
+**Phase BMAD :** Phase 4 Implementation — **Sprint 3 complet (dev + review + security), pret pour Sprint 4**
 
 ---
 
-## ⚡ TL;DR (30 secondes)
+## TL;DR (30 secondes)
 
 - **Epic 1** DONE — 7/7 stories, 18 pts
 - **Epic 2** DONE — 14/14 stories, 39 pts
-- **Epic 3** DONE (dev) — 14/14 stories, 36 pts — **commit `877200d`**
+- **Epic 3** DONE — 14/14 stories, 36 pts — **commit `c3ed47e` (review + security fixes)**
 - **224 tests passing, typecheck clean, lint 0 errors, build OK (166 kB)**
-- **Prochain** : Code review Sprint 3 (Blind Hunter + Edge + Auditor) → Security Audit → merge sur `main`
-- **Après review** : Sprint 4 — Rive Avatar & Coulisses Page (28 pts)
+- **Code review** : 65 findings triaged, 8 patches applied, 2 deferred Sprint 4, ~55 dismissed
+- **Security audit** : 4/4 gates PASS (secrets, deps, TS strict, pre-commit hook)
+- **GitHub Issue #7** : Bryan notifie pour validation visuelle Hero
+- **Prochain** : Sprint 4 — Rive Avatar & Coulisses Page (28 pts)
 
 ---
 
-## 🎯 Sprint 3 — Ce qui a été fait
+## Sprint 3 — Ce qui a ete fait
 
 ### Livrables (57 fichiers, 4173 insertions)
 
 **Infrastructure :**
-- `motion` 12.38.0 installé
+- `motion` 12.38.0 installe
 - `usePrefersReducedMotion` hook + `motion-variants.ts`
-- `jsdom` + `@testing-library/react` ajoutés aux devDeps
+- `jsdom` + `@testing-library/react` ajoutes aux devDeps
 
 **Composants Aceternity :**
 - `aurora-background.tsx` — Aurora avec Color Shift selon alertLevel
-- `background-beams.tsx` — Faisceaux canvas animés (40% opacity)
+- `background-beams.tsx` — Faisceaux canvas animes (40% opacity)
 - `aurora-with-beams.tsx` — Composition
-- `bento-grid.tsx` + `bento-grid-item.tsx` — Layout asymétrique
-- `glare-card.tsx` — Shimmer doré au hover
+- `bento-grid.tsx` + `bento-grid-item.tsx` — Layout asymetrique
+- `glare-card.tsx` — Shimmer dore au hover
 - `text-generate-effect.tsx` — Mot par mot avec blur
 
 **Composants Magic UI :**
-- `number-ticker.tsx` — Compteur animé viewport-enter
+- `number-ticker.tsx` — Compteur anime viewport-enter
 - `animated-gradient-text.tsx` — Gradient gold shimmer
 
 **Composants Business :**
-- `KpiCard.tsx` — Card financière (GlareCard + BentoGridItem + NumberTicker)
+- `KpiCard.tsx` — Card financiere (GlareCard + BentoGridItem + NumberTicker)
 - `KpiBentoGrid.tsx` — Grille 6 KPIs (stagger Motion 12)
 - `TaglineHeader.tsx` — Tagline avec AnimatedGradientText + next-intl
 - `MetadataChips.tsx` — Date + reading time + alert level chips
-- `BriefingPanel.tsx` — Briefing avec TextGenerateEffect + disclaimer légal
-- `FreshnessIndicator.tsx` — Dot pulsant + label "Live · Updated X min ago"
-- `RiskIndicator.tsx` — **Pulse Ring** (UX Amendment 001) — 4 états (low/warning/alert/crisis)
-- `SecondaryKpisMarquee.tsx` — Ticker financier défilant (8 KPIs secondaires)
+- `BriefingPanel.tsx` — Briefing avec TextGenerateEffect + disclaimer legal
+- `FreshnessIndicator.tsx` — Dot pulsant + label "Live - Updated X min ago"
+- `RiskIndicator.tsx` — **Pulse Ring** (UX Amendment 001) — 4 etats (low/warning/alert/crisis)
+- `SecondaryKpisMarquee.tsx` — Ticker financier defilant (8 KPIs secondaires)
 - `HeroSection.tsx` — Assemblage complet Aurora + Ring + Tagline + Briefing + KPIs + Marquee
 
 **Data & Content :**
-- `src/data/fallback-analysis.json` — Données statiques demo valides
-- `src/data/mock-kpis.ts` — 6 KPIs primaires + 8 KPIs secondaires
-- `src/lib/content.ts` — `getLatestAnalysis()` SSR avec fallback R2
-- `src/app/[locale]/page.tsx` — Branché sur vraies données R2
-
-**i18n :**
-- `messages/fr.json` + `messages/en.json` — Clés Hero section ajoutées
+- `src/data/fallback-analysis.json` — Donnees statiques demo valides
+- `src/data/mock-kpis.ts` — 6 KPIs primaires + 8 KPIs secondaires (STATIC_SECONDARY_KPIS)
+- `src/lib/content.ts` — `getLatestAnalysis()` SSR avec fallback R2 + emergency fallback + cache()
+- `src/app/[locale]/page.tsx` — Branche sur vraies donnees R2
 
 ---
 
-## 🔍 Prochaine étape : Code Review Sprint 3
+## Code Review Sprint 3 — Resultats
 
-### Workflow review (défini dans memory `sprint_workflow.md`)
-1. **Blind Hunter** — review adversariale (trouver les bugs cachés)
-2. **Edge Case Hunter** — boundary conditions
-3. **Auditor** — conformité architecture, patterns
+8 patches appliques (0 decision_needed, 2 deferred) :
 
-Commande pour lancer : utiliser skill `bmad-code-review`
+| # | Severite | Fix |
+|---|----------|-----|
+| P1 | CRITICAL | `loadFallback()` emergency fallback — plus jamais de 500 |
+| P2 | HIGH | RiskIndicator reduced-motion — CSS keyframe override |
+| P3 | HIGH | AlertLevel type unifie (`calm` -> `low`) |
+| P5 | MEDIUM | `assert` -> `with` import syntax |
+| P6 | LOW | Invalid Date guards |
+| P7 | LOW | AnimatedGradientText double animation supprimee |
+| P8 | LOW | `getLatestAnalysis` wrappee avec `cache()` |
+| D1 | — | `MOCK_SECONDARY_KPIS` renomme `STATIC_SECONDARY_KPIS` |
 
-### Suivi de la Security Audit
-Security audit Sprint 3 = premier sprint avec composants client-side lourds.
-Focus : XSS via dangerouslySetInnerHTML (si présent), bundle size, deps CVE.
-
----
-
-## ⚠️ Points d'attention pour la review
-
-1. **`HeroSection.tsx`** importe `MOCK_SECONDARY_KPIS` depuis `@/data/mock-kpis` — les KPIs secondaires ne viennent pas encore de R2. C'est voulu (Story 3.14 scope limité) mais à noter.
-2. **`TaglineHeader.tsx`** utilise `useTranslations` → nécessite le `NextIntlClientProvider` wrappant dans les tests. Pour l'instant, les tests component ne testent pas TaglineHeader directement (testé visuellement via page.tsx).
-3. **`content.ts`** utilise `import ... assert { type: 'json' }` — syntax qui peut nécessiter un flag TS. À vérifier si typecheck reste clean sur CI.
-4. **First Load JS = 166 kB** — dans le budget mais à surveiller. Motion 12 pèse ~54 kB.
-5. **BackgroundBeams** utilise Canvas API — pas de fallback sans canvas npm package (warning vitest, ok en prod).
+**Deferred Sprint 4 :** Intl.NumberFormat (AA-02), secondary KPIs from R2 (BH-15)
 
 ---
 
-## 📦 État des stories Sprint 3
+## Security Audit Sprint 3
 
-| Story | Status | Commit |
-|---|---|---|
-| 3.1 Motion 12 | ✅ done | 877200d |
-| 3.2 Aurora + Beams | ✅ done | 877200d |
-| 3.3 NumberTicker | ✅ done | 877200d |
-| 3.4 AnimatedGradientText | ✅ done | 877200d |
-| 3.5 TextGenerateEffect | ✅ done | 877200d |
-| 3.6 BentoGrid | ✅ done | 877200d |
-| 3.7 GlareCard | ✅ done | 877200d |
-| 3.8 KpiCard | ✅ done | 877200d |
-| 3.9 KpiBentoGrid | ✅ done | 877200d |
-| 3.10 BriefingPanel + TaglineHeader + MetadataChips | ✅ done | 877200d |
-| 3.11 FreshnessIndicator | ✅ done | 877200d |
-| 3.12 Content client R2 SSR | ✅ done | 877200d |
-| 3.13 HeroSection + page.tsx | ✅ done | 877200d |
-| 3.14 SecondaryKpisMarquee | ✅ done | 877200d |
+| Gate | Resultat |
+|------|----------|
+| Gate 07 (Secrets) | PASS |
+| Gate 08 (Dependencies) | PASS — 0 CVE |
+| Gate TS (TypeScript strict) | PASS — 0 `any` |
+| Gate Hook (Pre-commit) | PASS |
 
 ---
 
-## 🔁 Prompt de reprise ultra-court
+## Etat des stories — Cumul
+
+| Epic | Stories | Points | Status |
+|------|---------|--------|--------|
+| Epic 1 — Foundation | 7/7 | 18 | DONE |
+| Epic 2 — Data Pipeline | 14/14 | 39 | DONE |
+| Epic 3 — Core UI Dashboard | 14/14 | 36 | DONE (reviewed + secured) |
+| **Total** | **35/35** | **93** | |
+
+---
+
+## Prochain : Sprint 4 — Rive Avatar & Coulisses (28 pts)
+
+Stories a definir. Focus :
+- Avatar Rive du Chartiste (animation interactive)
+- Page Coulisses (Behind the Scenes)
+- Integration pipeline live (R2 -> frontend)
+
+---
+
+## Prompt de reprise ultra-court
 
 ```
 Reprise YieldField. Epic 1+2+3 done (35 stories, 93 pts, 224 tests).
-Sprint 3 dev terminé (commit 877200d). Prochaine étape : code review Sprint 3
-(bmad-code-review) → security audit → merge. Lire NEXT_SESSION.md.
+Sprint 3 review + security done (commit c3ed47e, pushed, Issue #7 Bryan).
+Prochain : Sprint 4 — Rive Avatar & Coulisses (28 pts).
+Lire NEXT_SESSION.md.
 ```
 
 ---
 
-*Fichier mis à jour par Claude Sonnet 4.6 — 2026-04-12*
+*Fichier mis a jour par Claude Opus 4.6 — 2026-04-12*
