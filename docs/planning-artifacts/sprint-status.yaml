@@ -3,7 +3,7 @@
 # Updated manually as stories progress
 
 generated: 2026-04-11
-last_updated: 2026-04-12  # Sprint 1 code review done — all stories 1.1-1.7 complete
+last_updated: 2026-04-12  # Sprint 1 code review done — all stories 1.1-1.7 complete; 2.6 ready-for-dev
 project: YieldField
 project_key: YFIELD
 tracking_system: file-system
@@ -35,12 +35,12 @@ development_status:
   epic-2: in-progress
   # Sprint 2a — Data ingestion & alerts (20 pts)
   2-1-schemas-zod: review
-  2-2-client-finnhub: backlog
-  2-3-client-fred: backlog
-  2-4-client-alpha-vantage: backlog
-  2-5-script-fetch-data-fallback: backlog
-  2-6-bootstrap-vix-history: backlog
-  2-7-script-compute-alert-vix-percentile: backlog
+  2-2-client-finnhub: review
+  2-3-client-fred: review
+  2-4-client-alpha-vantage: review
+  2-5-script-fetch-data-fallback: review
+  2-6-bootstrap-vix-history: review
+  2-7-script-compute-alert-vix-percentile: review
   # Sprint 2b — AI generation & publishing (19 pts)
   2-8-client-claude-api: backlog
   2-9-prompt-v01-chartiste-lettre: backlog

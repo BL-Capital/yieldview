@@ -55,8 +55,8 @@ for file in $staged_files; do
         continue
     fi
 
-    # Check if .env file is being committed
-    if echo "$file" | grep -qE '\.env($|\.)'; then
+    # Check if .env file is being committed (allow .env.example and .env.sample — templates)
+    if echo "$file" | grep -qE '\.env($|\.)' && ! echo "$file" | grep -qE '\.env\.(example|sample|template)$'; then
         echo -e "${RED}BLOCKED:${NC} .env file detected: $file"
         echo "  -> Add it to .gitignore instead"
         found=1
