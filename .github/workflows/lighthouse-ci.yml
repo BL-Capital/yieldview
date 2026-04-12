@@ -3,14 +3,13 @@ name: Lighthouse CI
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   lighthouse:
     name: Lighthouse Audit (≥ 90)
     runs-on: ubuntu-latest
-    # DISABLED until Sprint 6 Story 6.1 — page placeholder Sprint 1 n'a pas les optimisations finales
-    # Activé en Story 6.1 (Lighthouse CI gates) quand l'UI Epic 3-5 sera complète
-    if: false
 
     steps:
       - name: Checkout
@@ -30,6 +29,17 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          NEXT_PUBLIC_R2_PUBLIC_URL: ${{ secrets.NEXT_PUBLIC_R2_PUBLIC_URL }}
+          NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
 
       - name: Run Lighthouse CI
-        run: npx @lhci/cli@latest autorun
+        run: pnpm run lighthouse
+
+      - name: Upload Lighthouse reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 14

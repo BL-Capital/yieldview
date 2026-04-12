@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { Header } from "@/components/common/Header";
 import { Footer } from "@/components/common/Footer";
 import { buildMetadata } from "@/lib/metadata";
+import { CfAnalytics } from "@/components/common/CfAnalytics";
 
 type Props = {
   children: React.ReactNode;
@@ -39,10 +40,11 @@ export default async function LocaleLayout({ children, params }: Props) {
     <NextIntlClientProvider locale={locale}>
       <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-1">{children}</main>
+        <main id="main-content" className="flex-1">{children}</main>
         <Footer />
       </div>
       <Toaster />
+      <CfAnalytics />
     </NextIntlClientProvider>
   );
 }

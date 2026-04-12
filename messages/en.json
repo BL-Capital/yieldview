@@ -32,6 +32,7 @@
   },
   "Header": {
     "logoTagline": "AI-powered market finance",
+    "skipToContent": "Skip to main content",
     "nav": {
       "home": "Home",
       "coulisses": "Behind the Scenes",
@@ -96,6 +97,19 @@
     "logsSection": {
       "title": "Live Pipeline",
       "description": "The last 7 executions of the nightly pipeline."
+    }
+  },
+  "Errors": {
+    "notFound": {
+      "title": "Page not found",
+      "subtitle": "This page doesn't exist or has been moved. Markets move fast, so do our pages.",
+      "cta": "Back to home"
+    },
+    "serverError": {
+      "title": "Something went wrong",
+      "subtitle": "An unexpected error occurred. Our team is on it.",
+      "retry": "Try again",
+      "cta": "Back to home"
     }
   }
 }

@@ -1,10 +1,18 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost:3000/fr"],
+      "url": [
+        "http://localhost:3000/fr",
+        "http://localhost:3000/fr/coulisses",
+        "http://localhost:3000/en"
+      ],
       "numberOfRuns": 3,
-      "startServerCommand": "pnpm run start",
-      "startServerReadyPattern": "Starting..."
+      "startServerCommand": "pnpm start",
+      "startServerReadyPattern": "Ready in",
+      "settings": {
+        "chromeFlags": "--headless --no-sandbox",
+        "preset": "desktop"
+      }
     },
     "assert": {
       "preset": "lighthouse:no-pwa",
@@ -16,7 +24,8 @@
       }
     },
     "upload": {
-      "target": "temporary-public-storage"
+      "target": "filesystem",
+      "outputDir": ".lighthouseci"
     }
   }
 }

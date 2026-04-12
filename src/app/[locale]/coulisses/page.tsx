@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Suspense } from 'react'
 import Link from 'next/link'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { getLatestAnalysis } from '@/lib/content'
@@ -7,8 +6,8 @@ import { TracingBeam } from '@/components/aceternity/tracing-beam'
 import { DotPattern } from '@/components/magic-ui/dot-pattern'
 import { TimelineStep } from '@/components/coulisses/TimelineStep'
 import { PromptCodeBlock } from '@/components/coulisses/PromptCodeBlock'
-import { PipelineLogsTable } from '@/components/coulisses/PipelineLogsTable'
-import { HeroAvatar } from '@/components/rive/HeroAvatar'
+import { PipelineLogsTableLazy } from '@/components/coulisses/PipelineLogsTableLazy'
+import { HeroAvatarLazy } from '@/components/rive/HeroAvatarLazy'
 import { cn } from '@/lib/utils'
 
 type Props = {
@@ -130,7 +129,7 @@ export default async function CoulissesPage({ params }: Props) {
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 mb-16">
-          <HeroAvatar riskLevel={riskLevel} />
+          <HeroAvatarLazy riskLevel={riskLevel} />
           <div>
             <h1 className="text-3xl sm:text-4xl font-bold text-zinc-100 mb-3">
               {t('title')}
@@ -177,9 +176,7 @@ export default async function CoulissesPage({ params }: Props) {
               <p className="text-xs font-mono text-zinc-500 mb-3 uppercase tracking-widest">
                 {t('logsSection.title')}
               </p>
-              <Suspense fallback={<div className="h-[360px] rounded-xl border border-zinc-800 bg-zinc-950 animate-pulse" />}>
-                <PipelineLogsTable />
-              </Suspense>
+              <PipelineLogsTableLazy />
             </div>
           </TimelineStep>
 

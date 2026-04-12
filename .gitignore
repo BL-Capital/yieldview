@@ -149,6 +149,15 @@ _bmad/*/state/
 # Pipeline data — generated at runtime, not versioned
 data/vix-history.json
 
+# Lighthouse CI reports
+.lighthouseci/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
 # Next.js / Story 1.1 additions
 next-env.d.ts
 /build

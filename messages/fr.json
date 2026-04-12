@@ -32,6 +32,7 @@
   },
   "Header": {
     "logoTagline": "Finance de marché éclairée par l'IA",
+    "skipToContent": "Aller au contenu principal",
     "nav": {
       "home": "Accueil",
       "coulisses": "Les Coulisses",
@@ -120,6 +121,19 @@
     "logsSection": {
       "title": "Pipeline en temps réel",
       "description": "Les 7 dernières exécutions du pipeline nocturne."
+    }
+  },
+  "Errors": {
+    "notFound": {
+      "title": "Page introuvable",
+      "subtitle": "Cette page n'existe pas ou a été déplacée. Le marché évolue vite, nos pages aussi.",
+      "cta": "Retour à l'accueil"
+    },
+    "serverError": {
+      "title": "Quelque chose s'est mal passé",
+      "subtitle": "Une erreur inattendue est survenue. Notre équipe est sur le coup.",
+      "retry": "Réessayer",
+      "cta": "Retour à l'accueil"
     }
   }
 }

@@ -3,8 +3,18 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'motion/react'
 import { toast } from 'sonner'
-import hljs from 'highlight.js'
+import hljs from 'highlight.js/lib/core'
+import javascript from 'highlight.js/lib/languages/javascript'
+import json from 'highlight.js/lib/languages/json'
+import bash from 'highlight.js/lib/languages/bash'
+import markdown from 'highlight.js/lib/languages/markdown'
+
 import { cn } from '@/lib/utils'
+
+hljs.registerLanguage('javascript', javascript)
+hljs.registerLanguage('json', json)
+hljs.registerLanguage('bash', bash)
+hljs.registerLanguage('markdown', markdown)
 
 interface CodeBlockProps {
   code: string
@@ -37,6 +47,13 @@ export function CodeBlock({
   useEffect(() => {
     try {
       const lang = hljs.getLanguage(language) ? language : 'plaintext'
+      if (lang === 'plaintext') {
+        // plaintext does not escape HTML — do it manually to prevent XSS
+        setHighlighted(
+          code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'),
+        )
+        return
+      }
       const result = hljs.highlight(code, { language: lang })
       setHighlighted(result.value)
     } catch {
