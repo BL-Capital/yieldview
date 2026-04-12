@@ -1,0 +1,114 @@
+{
+  "date": "2026-04-12",
+  "generated_at": "2026-04-12T06:30:00.000Z",
+  "validated_at": null,
+  "pipeline_run_id": "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+  "version": "ai",
+  "briefing": {
+    "fr": "Les marchés européens s'inscrivent en légère hausse ce matin, portés par des données macroéconomiques rassurantes en zone euro. Le CAC 40 progresse de 2,47 %, s'établissant à 7 234 points, tandis que l'EUR/USD se maintient autour de 1,0823.\n\nL'or, valeur refuge par excellence, continue son ascension à 2 312 $/oz, signe que les investisseurs cherchent à couvrir leur exposition aux risques géopolitiques. Le VIX, baromètre de la volatilité, reste contenu à 22,4 — en deçà du seuil d'alerte p90.",
+    "en": "European markets are trading slightly higher this morning, supported by reassuring macroeconomic data from the eurozone. The CAC 40 is up 2.47%, standing at 7,234 points, while EUR/USD holds around 1.0823.\n\nGold, the quintessential safe haven, continues its ascent at $2,312/oz, signaling that investors are seeking cover from geopolitical risks. The VIX, volatility barometer, remains contained at 22.4 — below the p90 alert threshold."
+  },
+  "tagline": {
+    "fr": "Le marché vous parle. Le Chartiste l'interprète.",
+    "en": "The market speaks. The Chartiste interprets."
+  },
+  "metadata": {
+    "theme_of_day": {
+      "fr": "Reprise modérée, risques géopolitiques contenus",
+      "en": "Moderate recovery, geopolitical risks contained"
+    },
+    "certainty": "definitive",
+    "upcoming_event": {
+      "fr": "BCE — décision de taux jeudi",
+      "en": "ECB — rate decision Thursday"
+    },
+    "risk_level": "low"
+  },
+  "kpis": [
+    {
+      "id": "cac40",
+      "category": "indices",
+      "label": { "fr": "CAC 40", "en": "CAC 40" },
+      "value": 7234.56,
+      "unit": "pts",
+      "change_day": 174.23,
+      "change_pct": 2.47,
+      "direction": "up",
+      "source": "finnhub",
+      "timestamp": "2026-04-12T06:30:00.000Z",
+      "freshness_level": "live"
+    },
+    {
+      "id": "spx",
+      "category": "indices",
+      "label": { "fr": "S&P 500", "en": "S&P 500" },
+      "value": 5123.45,
+      "unit": "pts",
+      "change_day": -12.34,
+      "change_pct": -0.24,
+      "direction": "down",
+      "source": "finnhub",
+      "timestamp": "2026-04-12T06:30:00.000Z",
+      "freshness_level": "live"
+    },
+    {
+      "id": "eurusd",
+      "category": "macro",
+      "label": { "fr": "EUR/USD", "en": "EUR/USD" },
+      "value": 1.0823,
+      "unit": "",
+      "change_day": 0.0045,
+      "change_pct": 0.42,
+      "direction": "up",
+      "source": "finnhub",
+      "timestamp": "2026-04-12T06:30:00.000Z",
+      "freshness_level": "live"
+    },
+    {
+      "id": "gold",
+      "category": "macro",
+      "label": { "fr": "Or", "en": "Gold" },
+      "value": 2312.80,
+      "unit": "$/oz",
+      "change_day": 18.40,
+      "change_pct": 0.80,
+      "direction": "up",
+      "source": "finnhub",
+      "timestamp": "2026-04-12T06:30:00.000Z",
+      "freshness_level": "live"
+    },
+    {
+      "id": "btc",
+      "category": "indices",
+      "label": { "fr": "Bitcoin", "en": "Bitcoin" },
+      "value": 67450.0,
+      "unit": "$/BTC",
+      "change_day": -1234.5,
+      "change_pct": -1.80,
+      "direction": "down",
+      "source": "finnhub",
+      "timestamp": "2026-04-12T06:30:00.000Z",
+      "freshness_level": "live"
+    },
+    {
+      "id": "vix",
+      "category": "volatility",
+      "label": { "fr": "VIX", "en": "VIX" },
+      "value": 22.4,
+      "unit": "",
+      "change_day": 1.2,
+      "change_pct": 5.66,
+      "direction": "up",
+      "source": "fred",
+      "timestamp": "2026-04-12T06:30:00.000Z",
+      "freshness_level": "live"
+    }
+  ],
+  "alert": {
+    "active": false,
+    "level": null,
+    "vix_current": 22.4,
+    "vix_p90_252d": 31.2,
+    "triggered_at": null
+  }
+}

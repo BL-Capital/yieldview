@@ -1,54 +1,32 @@
-import { useTranslations } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { setRequestLocale } from 'next-intl/server'
+import type { Metadata } from 'next'
+import { getLatestAnalysis } from '@/lib/content'
+import { HeroSection } from '@/components/dashboard/HeroSection'
 
 type Props = {
-  params: Promise<{ locale: string }>;
-};
-
-export default async function Home({ params }: Props) {
-  const { locale } = await params;
-  setRequestLocale(locale);
-
-  return <HomeContent />;
+  params: Promise<{ locale: string }>
 }
 
-function HomeContent() {
-  const t = useTranslations("Home");
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params
+  const analysis = await getLatestAnalysis()
+  const tagline = locale === 'fr' ? analysis.tagline.fr : analysis.tagline.en
 
-  return (
-    <section className="min-h-screen flex flex-col items-center justify-center gap-12 p-8">
-      <h1 className="font-serif text-display-1 text-yield-gold">
-        {t("title")}
-      </h1>
-      <p className="font-sans text-body-lg text-yield-ink max-w-content text-center">
-        {t("subtitle")}
-      </p>
+  return {
+    title: `YieldField — ${analysis.date}`,
+    description: tagline,
+    openGraph: {
+      title: `YieldField — ${analysis.date}`,
+      description: tagline,
+    },
+  }
+}
 
-      <div className="flex gap-4 items-center">
-        <Button>{t("cta")}</Button>
-        <Button variant="outline">{t("learnMore")}</Button>
-      </div>
+export default async function Home({ params }: Props) {
+  const { locale } = await params
+  setRequestLocale(locale)
 
-      <div className="flex gap-3">
-        <Badge>{t("badges.inflation")}</Badge>
-        <Badge variant="secondary">{t("badges.risk")}</Badge>
-      </div>
+  const analysis = await getLatestAnalysis()
 
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="font-mono text-number-xl text-bull">
-            {t("card.value")}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-body-sm text-yield-ink-muted">
-            {t("card.label")}
-          </p>
-        </CardContent>
-      </Card>
-    </section>
-  );
+  return <HeroSection analysis={analysis} locale={locale} />
 }

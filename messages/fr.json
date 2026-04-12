@@ -13,6 +13,20 @@
       "label": "CAC 40 — performance du jour"
     }
   },
+  "Hero": {
+    "tagline": "Le marché vous parle. Le Chartiste l'interprète.",
+    "updatedAt": "Mis à jour le {date}",
+    "readingTime": "{min} min de lecture",
+    "alertLevel": {
+      "calm": "Marché calme",
+      "warning": "Vigilance",
+      "alert": "Alerte",
+      "crisis": "ALERTE CRITIQUE"
+    },
+    "cta": "Voir les Coulisses",
+    "disclaimer": "Les informations présentées sont à titre informatif uniquement et ne constituent pas un conseil en investissement.",
+    "riskIndicator": "Indicateur de risque marché : {level}"
+  },
   "Common": {
     "disclaimer": "Ceci n'est pas un conseil en investissement. Contenu éditorial généré par IA à des fins d'information et de démonstration."
   },

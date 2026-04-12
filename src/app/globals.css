@@ -100,6 +100,19 @@
   --ease-editorial: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-cinema: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-bounce-subtle: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* === Custom animations === */
+  --animate-aurora-pulse: aurora-pulse 8s ease-in-out infinite;
+  --animate-aurora-blob-1: aurora-blob-1 12s ease-in-out infinite;
+  --animate-aurora-blob-2: aurora-blob-2 16s ease-in-out infinite;
+  --animate-aurora-blob-3: aurora-blob-3 14s ease-in-out infinite;
+  --animate-pulse-ring-slow: pulse-ring 3s ease-in-out infinite;
+  --animate-pulse-ring-normal: pulse-ring 2s ease-in-out infinite;
+  --animate-pulse-ring-fast: pulse-ring 1.2s ease-in-out infinite;
+  --animate-pulse-ring-crisis: pulse-ring 0.8s ease-in-out infinite;
+  --animate-marquee-normal: marquee 40s linear infinite;
+  --animate-marquee-slow: marquee 60s linear infinite;
+  --animate-marquee-fast: marquee 20s linear infinite;
 }
 
 /* === shadcn/ui theme variables (mapped to YieldField tokens) === */
@@ -194,5 +207,55 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+}
+
+/* === Aurora animation keyframes === */
+@keyframes aurora-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes aurora-blob-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.05); }
+  66% { transform: translate(-20px, 10px) scale(0.95); }
+}
+
+@keyframes aurora-blob-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 20px) scale(1.08); }
+}
+
+@keyframes aurora-blob-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  40% { transform: translate(20px, -30px) scale(1.06); }
+  80% { transform: translate(-10px, 15px) scale(0.94); }
+}
+
+/* === Pulse Ring keyframes (Story 3.13 RiskIndicator) === */
+@keyframes pulse-ring {
+  0%, 100% { transform: scale(1); opacity: var(--pulse-min, 0.3); }
+  50% { transform: scale(1.08); opacity: var(--pulse-max, 0.6); }
+}
+
+/* === Gradient shimmer (AnimatedGradientText) === */
+@keyframes gradient-shimmer {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* === Marquee keyframe (Story 3.14) === */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-aurora-pulse,
+  .animate-aurora-blob-1,
+  .animate-aurora-blob-2,
+  .animate-aurora-blob-3 {
+    animation: none;
   }
 }
