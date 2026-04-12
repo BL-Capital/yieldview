@@ -3,7 +3,7 @@
 # Updated manually as stories progress
 
 generated: 2026-04-11
-last_updated: 2026-04-12  # Sprint 2a done, Sprint 2b — Stories 2.8, 2.10, 2.11, 2.12, 2.14 ready-for-dev
+last_updated: 2026-04-12  # Epic 2 complete (Sprint 2a + 2b), ready for Sprint 3
 project: YieldField
 project_key: YFIELD
 tracking_system: file-system
@@ -32,7 +32,7 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2 — Data Pipeline Backend (splitté Sprint 2a + Sprint 2b)
-  epic-2: in-progress
+  epic-2: done
   # Sprint 2a — Data ingestion & alerts (20 pts)
   2-1-schemas-zod: done
   2-2-client-finnhub: done
@@ -42,13 +42,13 @@ development_status:
   2-6-bootstrap-vix-history: done
   2-7-script-compute-alert-vix-percentile: done
   # Sprint 2b — AI generation & publishing (19 pts)
-  2-8-client-claude-api: ready-for-dev
-  2-9-prompt-v01-chartiste-lettre: ready-for-dev
-  2-10-script-generate-ai: ready-for-dev
-  2-11-r2-client-pending: ready-for-dev
-  2-12-script-publish-r2: ready-for-dev
-  2-13-github-actions-daily-pipeline: ready-for-dev
-  2-14-script-log-run-github-issue: ready-for-dev
+  2-8-client-claude-api: done
+  2-9-prompt-v01-chartiste-lettre: done
+  2-10-script-generate-ai: done
+  2-11-r2-client-pending: done
+  2-12-script-publish-r2: done
+  2-13-github-actions-daily-pipeline: done
+  2-14-script-log-run-github-issue: done
   epic-2-retrospective: optional
 
   # Epic 3 — Core UI (Sprint 3)
@@ -133,19 +133,19 @@ sprints:
     end_date: "S1 + 14j"
     goal: "Data Pipeline Part 1 : schemas + clients API + fetch orchestré + bootstrap VIX + compute alert"
     points_committed: 20
-    points_completed: 0
-    status: "not_started"
+    points_completed: 20
+    status: "done"
   - sprint_number: "2b"
     start_date: "S1 + 14j"
     end_date: "S1 + 21j"
     goal: "Data Pipeline Part 2 : Claude API + generate-ai bilingue + publication R2 + GitHub Actions + logs"
     points_committed: 19
-    points_completed: 0
-    status: "not_started"
+    points_completed: 19
+    status: "done"
   - sprint_number: 3
     start_date: "S1 + 21j"
     end_date: "S1 + 28j"
-    goal: "Core UI Dashboard : hero homepage avec Aurora + SVG avatar + Bento KPIs + Marquee secondaire"
+    goal: "Core UI Dashboard : hero homepage avec Aurora + Pulse Ring + Bento KPIs + Marquee secondaire"
     points_committed: 36
     points_completed: 0
     status: "not_started"
@@ -180,14 +180,14 @@ sprints:
 
 velocity:
   sprint_1: 18
-  sprint_2a: null
-  sprint_2b: null
+  sprint_2a: 20
+  sprint_2b: 19
   sprint_3: null
   sprint_4: null
   sprint_5: null
   sprint_6: null
   sprint_7: null
-  rolling_average: null
+  rolling_average: 19  # (18 + 20 + 19) / 3 = 19 pts/sprint
 
 notes:
   - "P0 = critical for MVP, must be in the sprint"
