@@ -14,6 +14,7 @@
     "bootstrap:vix": "tsx scripts/pipeline/bootstrap-vix-history.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.88.0",
     "@base-ui/react": "^1.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
