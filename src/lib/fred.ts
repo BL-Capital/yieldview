@@ -31,6 +31,7 @@ interface FredResponse {
 export interface FredSeriesResult {
   value: number;
   change_day: number;
+  change_pct: number;
   direction: 'up' | 'down' | 'flat';
   source: 'fred';
   timestamp: string; // ISO 8601
@@ -65,10 +66,15 @@ function parseObservations(observations: FredObservation[]): FredSeriesResult {
   const currentValue = parseFloat(latest.value);
   const previousValue = previous ? parseFloat(previous.value) : currentValue;
   const changeDay = parseFloat((currentValue - previousValue).toFixed(4));
+  const changePct =
+    previousValue !== 0
+      ? parseFloat(((currentValue - previousValue) / previousValue * 100).toFixed(4))
+      : 0;
 
   return {
     value: currentValue,
     change_day: changeDay,
+    change_pct: changePct,
     direction: changeDay > 0 ? 'up' : changeDay < 0 ? 'down' : 'flat',
     source: 'fred',
     // FRED dates are "YYYY-MM-DD" — use T12:00:00Z to avoid timezone drift

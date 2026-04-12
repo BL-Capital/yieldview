@@ -37,8 +37,8 @@ development_status:
   2-1-schemas-zod: review
   2-2-client-finnhub: review
   2-3-client-fred: review
-  2-4-client-alpha-vantage: in-progress
-  2-5-script-fetch-data-fallback: backlog
+  2-4-client-alpha-vantage: review
+  2-5-script-fetch-data-fallback: review
   2-6-bootstrap-vix-history: backlog
   2-7-script-compute-alert-vix-percentile: backlog
   # Sprint 2b — AI generation & publishing (19 pts)
