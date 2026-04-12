@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "bootstrap:vix": "tsx scripts/pipeline/bootstrap-vix-history.ts"
+    "bootstrap:vix": "tsx --env-file=.env.local scripts/pipeline/bootstrap-vix-history.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
