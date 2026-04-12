@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { getLocale } from "next-intl/server";
 import "./globals.css";
 
 const instrumentSerif = localFont({
@@ -39,13 +40,15 @@ export const metadata: Metadata = {
     "Finance de marché éclairée par l'IA — un briefing quotidien tenu par un chartiste virtuel.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html lang="fr" className="dark">
+    <html lang={locale} className="dark" suppressHydrationWarning>
       <body
         className={`${instrumentSerif.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased bg-yield-dark text-yield-ink`}
       >

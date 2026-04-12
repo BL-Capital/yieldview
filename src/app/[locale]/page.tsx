@@ -1,27 +1,40 @@
+import { useTranslations } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function Home() {
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function Home({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  return <HomeContent />;
+}
+
+function HomeContent() {
+  const t = useTranslations("Home");
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-12 p-8">
-      <h1 className="font-serif text-display-1 text-yield-gold">YieldField</h1>
+      <h1 className="font-serif text-display-1 text-yield-gold">
+        {t("title")}
+      </h1>
       <p className="font-sans text-body-lg text-yield-ink max-w-content text-center">
-        Finance de marché éclairée par l&apos;IA — un briefing quotidien tenu
-        par un chartiste virtuel.
+        {t("subtitle")}
       </p>
 
-      {/* shadcn smoke test */}
       <div className="flex gap-4 items-center">
-        <Button>Voir les Coulisses</Button>
-        <Button variant="outline">En savoir plus</Button>
-        <Button variant="ghost">Ghost</Button>
+        <Button>{t("cta")}</Button>
+        <Button variant="outline">{t("learnMore")}</Button>
       </div>
 
       <div className="flex gap-3">
         <Badge>Inflation US</Badge>
         <Badge variant="secondary">Risque moyen</Badge>
-        <Badge variant="destructive">VIX Alert</Badge>
       </div>
 
       <Card className="w-full max-w-sm">
