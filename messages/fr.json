@@ -3,7 +3,15 @@
     "title": "YieldField",
     "subtitle": "Finance de marché éclairée par l'IA — un briefing quotidien tenu par un chartiste virtuel.",
     "cta": "Voir les Coulisses",
-    "learnMore": "En savoir plus"
+    "learnMore": "En savoir plus",
+    "badges": {
+      "inflation": "Inflation US",
+      "risk": "Risque moyen"
+    },
+    "card": {
+      "value": "+2,47 %",
+      "label": "CAC 40 — performance du jour"
+    }
   },
   "Common": {
     "disclaimer": "Ceci n'est pas un conseil en investissement. Contenu éditorial généré par IA à des fins d'information et de démonstration."
@@ -12,13 +20,15 @@
     "logoTagline": "Finance de marché éclairée par l'IA",
     "nav": {
       "home": "Accueil",
-      "coulisses": "Les Coulisses"
+      "coulisses": "Les Coulisses",
+      "ariaLabel": "Navigation principale"
     }
   },
   "Footer": {
     "newsletter": {
       "placeholder": "Votre e-mail",
-      "cta": "S'abonner"
+      "cta": "S'abonner",
+      "comingSoon": "Bientôt disponible"
     },
     "copyright": "Tous droits réservés."
   },

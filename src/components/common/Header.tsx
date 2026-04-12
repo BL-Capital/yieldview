@@ -19,7 +19,7 @@ export function Header() {
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center gap-6 text-sm">
+        <nav aria-label={t("nav.ariaLabel")} className="hidden md:flex items-center gap-6 text-sm">
           <Link
             href="/"
             className="text-yield-ink/70 hover:text-yield-ink transition-colors"

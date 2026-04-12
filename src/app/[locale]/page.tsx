@@ -19,7 +19,7 @@ function HomeContent() {
   const t = useTranslations("Home");
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center gap-12 p-8">
+    <section className="min-h-screen flex flex-col items-center justify-center gap-12 p-8">
       <h1 className="font-serif text-display-1 text-yield-gold">
         {t("title")}
       </h1>
@@ -33,22 +33,22 @@ function HomeContent() {
       </div>
 
       <div className="flex gap-3">
-        <Badge>Inflation US</Badge>
-        <Badge variant="secondary">Risque moyen</Badge>
+        <Badge>{t("badges.inflation")}</Badge>
+        <Badge variant="secondary">{t("badges.risk")}</Badge>
       </div>
 
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="font-mono text-number-xl text-bull">
-            +2,47%
+            {t("card.value")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-body-sm text-yield-ink-muted">
-            CAC 40 — performance du jour
+            {t("card.label")}
           </p>
         </CardContent>
       </Card>
-    </main>
+    </section>
   );
 }

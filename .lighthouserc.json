@@ -2,9 +2,9 @@
   "ci": {
     "collect": {
       "url": ["http://localhost:3000/fr"],
-      "numberOfRuns": 1,
+      "numberOfRuns": 3,
       "startServerCommand": "pnpm run start",
-      "startServerReadyPattern": "Ready on"
+      "startServerReadyPattern": "Starting..."
     },
     "assert": {
       "preset": "lighthouse:no-pwa",
