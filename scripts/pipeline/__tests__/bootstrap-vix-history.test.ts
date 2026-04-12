@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-  parseCandles,
+  parseFredObservations,
   deduplicateAndSort,
-  fetchVixCandles,
+  fetchVixHistory,
   uploadToR2,
   writeLocal,
   BootstrapError,
@@ -22,18 +22,27 @@ import fs from 'fs';
 const mockMkdirSync = vi.mocked(fs.mkdirSync);
 const mockWriteFileSync = vi.mocked(fs.writeFileSync);
 
+// ─── Mock R2 ──────────────────────────────────────────────────────────────────
+
+vi.mock('../../../src/lib/r2.js', () => ({
+  uploadJSON: vi.fn(),
+}));
+
+import { uploadJSON } from '../../../src/lib/r2.js';
+const mockUploadJSON = vi.mocked(uploadJSON);
+
 // ─── Mock fetch ───────────────────────────────────────────────────────────────
 
 const mockFetch = vi.fn();
 
 beforeEach(() => {
   globalThis.fetch = mockFetch as unknown as typeof fetch;
-  process.env['FINNHUB_API_KEY'] = 'test-key';
+  process.env['FRED_API_KEY'] = 'test-fred-key';
 });
 
 afterEach(() => {
   vi.clearAllMocks();
-  delete process.env['FINNHUB_API_KEY'];
+  delete process.env['FRED_API_KEY'];
   delete process.env['R2_ACCESS_KEY_ID'];
   delete process.env['R2_SECRET_ACCESS_KEY'];
   delete process.env['R2_BUCKET_NAME'];
@@ -42,56 +51,50 @@ afterEach(() => {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function makeCandleResponse(overrides: Partial<{ s: string; t: number[]; c: number[] }> = {}) {
+function makeFredResponse(observations: { date: string; value: string }[]) {
   return {
     ok: true,
     status: 200,
-    json: async () => ({
-      s: overrides.s ?? 'ok',
-      t: overrides.t ?? [1712000000, 1712086400, 1712172800],
-      c: overrides.c ?? [16.52, 17.21, 16.89],
-      h: [17.0, 17.8, 17.2],
-      l: [15.9, 16.5, 16.1],
-      o: [16.1, 17.0, 16.5],
-      v: [0, 0, 0],
-    }),
+    json: async () => ({ observations }),
   };
 }
 
-// ─── parseCandles ─────────────────────────────────────────────────────────────
+// ─── parseFredObservations ────────────────────────────────────────────────────
 
-describe('parseCandles', () => {
-  it('maps timestamps to YYYY-MM-DD dates', () => {
-    const data = {
-      s: 'ok',
-      t: [1712000000],
-      c: [16.52],
-      h: [17.0], l: [15.9], o: [16.1], v: [0],
-    };
-    const result = parseCandles(data);
-    expect(result[0].date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    expect(result[0].value).toBe(16.52);
+describe('parseFredObservations', () => {
+  it('parses valid observations into VixPoints', () => {
+    const result = parseFredObservations([
+      { date: '2026-04-10', value: '16.52' },
+      { date: '2026-04-11', value: '17.21' },
+    ]);
+    expect(result).toHaveLength(2);
+    expect(result[0]).toEqual({ date: '2026-04-10', value: 16.52 });
+    expect(result[1]).toEqual({ date: '2026-04-11', value: 17.21 });
+  });
+
+  it('filters out "." values (weekends/holidays)', () => {
+    const result = parseFredObservations([
+      { date: '2026-04-10', value: '16.52' },
+      { date: '2026-04-11', value: '.' },
+      { date: '2026-04-12', value: '.' },
+      { date: '2026-04-13', value: '17.21' },
+    ]);
+    expect(result).toHaveLength(2);
   });
 
   it('rounds values to 2 decimal places', () => {
-    const data = {
-      s: 'ok',
-      t: [1712000000],
-      c: [16.5555],
-      h: [17.0], l: [15.9], o: [16.1], v: [0],
-    };
-    const result = parseCandles(data);
+    const result = parseFredObservations([
+      { date: '2026-04-10', value: '16.5555' },
+    ]);
     expect(result[0].value).toBe(16.56);
   });
 
-  it('throws on mismatched t/c array lengths', () => {
-    const data = {
-      s: 'ok',
-      t: [1712000000],
-      c: [] as number[],
-      h: [], l: [], o: [], v: [],
-    };
-    expect(() => parseCandles(data)).toThrow('mismatch');
+  it('returns empty array when all values are dots', () => {
+    const result = parseFredObservations([
+      { date: '2026-04-10', value: '.' },
+      { date: '2026-04-11', value: '.' },
+    ]);
+    expect(result).toEqual([]);
   });
 });
 
@@ -111,7 +114,7 @@ describe('deduplicateAndSort', () => {
   it('deduplicates by keeping the last value for a given date', () => {
     const points: VixPoint[] = [
       { date: '2026-04-10', value: 15.0 },
-      { date: '2026-04-10', value: 16.5 }, // duplicate — last wins
+      { date: '2026-04-10', value: 16.5 },
     ];
     const result = deduplicateAndSort(points);
     expect(result).toHaveLength(1);
@@ -123,56 +126,54 @@ describe('deduplicateAndSort', () => {
   });
 });
 
-// ─── fetchVixCandles ──────────────────────────────────────────────────────────
+// ─── fetchVixHistory ──────────────────────────────────────────────────────────
 
-describe('fetchVixCandles', () => {
-  it('returns VixPoint array on happy path', async () => {
-    mockFetch.mockResolvedValueOnce(makeCandleResponse());
+describe('fetchVixHistory', () => {
+  it('returns VixPoint array from FRED VIXCLS', async () => {
+    mockFetch.mockResolvedValueOnce(
+      makeFredResponse([
+        { date: '2026-04-10', value: '16.52' },
+        { date: '2026-04-11', value: '.' },
+        { date: '2026-04-13', value: '17.21' },
+      ]),
+    );
 
-    const result = await fetchVixCandles(1712000000, 1743536000);
-
-    expect(result).toHaveLength(3);
-    expect(result[0].value).toBe(16.52);
-    expect(result[0].date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    const result = await fetchVixHistory();
+    expect(result).toHaveLength(2);
+    expect(result[0].date).toBe('2026-04-10');
+    expect(result[1].value).toBe(17.21);
   });
 
-  it('includes %5EVIX (URL-encoded) and token in URL', async () => {
-    mockFetch.mockResolvedValueOnce(makeCandleResponse());
+  it('includes VIXCLS series in URL', async () => {
+    mockFetch.mockResolvedValueOnce(
+      makeFredResponse([{ date: '2026-04-10', value: '16.52' }]),
+    );
 
-    await fetchVixCandles(1712000000, 1743536000);
+    await fetchVixHistory();
 
     const calledUrl = mockFetch.mock.calls[0][0] as string;
-    expect(calledUrl).toContain('%5EVIX');
-    expect(calledUrl).toContain('token=test-key');
-    expect(calledUrl).toContain('resolution=D');
+    expect(calledUrl).toContain('series_id=VIXCLS');
+    expect(calledUrl).toContain('api_key=test-fred-key');
   });
 
-  it('throws BootstrapError when FINNHUB_API_KEY is missing', async () => {
-    delete process.env['FINNHUB_API_KEY'];
+  it('throws BootstrapError when FRED_API_KEY is missing', async () => {
+    delete process.env['FRED_API_KEY'];
 
-    await expect(fetchVixCandles(1712000000, 1743536000)).rejects.toThrow(BootstrapError);
-    await expect(fetchVixCandles(1712000000, 1743536000)).rejects.toThrow('FINNHUB_API_KEY is not set');
+    await expect(fetchVixHistory()).rejects.toThrow(BootstrapError);
+    await expect(fetchVixHistory()).rejects.toThrow('FRED_API_KEY is not set');
     expect(mockFetch).not.toHaveBeenCalled();
   });
 
-  it('throws BootstrapError when s !== "ok"', async () => {
-    vi.useFakeTimers();
-    mockFetch.mockResolvedValue(makeCandleResponse({ s: 'no_data' }));
+  it('throws BootstrapError on HTTP error', async () => {
+    mockFetch.mockResolvedValue({ ok: false, status: 400, statusText: 'Bad Request' });
 
-    const promise = expect(fetchVixCandles(1712000000, 1743536000)).rejects.toThrow('no_data');
-    await vi.runAllTimersAsync();
-    await promise;
-    vi.useRealTimers();
+    await expect(fetchVixHistory()).rejects.toThrow(BootstrapError);
   });
 
-  it('throws BootstrapError on HTTP error', async () => {
-    vi.useFakeTimers();
-    mockFetch.mockResolvedValue({ ok: false, status: 429 });
+  it('throws BootstrapError on empty observations', async () => {
+    mockFetch.mockResolvedValue(makeFredResponse([]));
 
-    const promise = expect(fetchVixCandles(1712000000, 1743536000)).rejects.toThrow(BootstrapError);
-    await vi.runAllTimersAsync();
-    await promise;
-    vi.useRealTimers();
+    await expect(fetchVixHistory()).rejects.toThrow('empty observations');
   });
 });
 
@@ -196,18 +197,22 @@ describe('writeLocal', () => {
 // ─── uploadToR2 ───────────────────────────────────────────────────────────────
 
 describe('uploadToR2', () => {
-  it('skips upload and does not throw when R2 env vars are missing', async () => {
+  it('skips upload when R2 env vars are missing', async () => {
     const points: VixPoint[] = [{ date: '2026-04-10', value: 15.0 }];
-
-    // No R2 env vars set — should complete without error
     await expect(uploadToR2(points)).resolves.toBeUndefined();
+    expect(mockUploadJSON).not.toHaveBeenCalled();
   });
 
-  it('skips upload when only some R2 vars are set', async () => {
+  it('uploads when all R2 env vars are set', async () => {
     process.env['R2_ACCESS_KEY_ID'] = 'key';
-    // Missing the others
-    const points: VixPoint[] = [{ date: '2026-04-10', value: 15.0 }];
+    process.env['R2_SECRET_ACCESS_KEY'] = 'secret';
+    process.env['R2_BUCKET_NAME'] = 'bucket';
+    process.env['R2_ENDPOINT'] = 'https://endpoint';
+    mockUploadJSON.mockResolvedValueOnce(undefined);
 
-    await expect(uploadToR2(points)).resolves.toBeUndefined();
+    const points: VixPoint[] = [{ date: '2026-04-10', value: 15.0 }];
+    await uploadToR2(points);
+
+    expect(mockUploadJSON).toHaveBeenCalledWith('vix-history/vix-252d.json', points);
   });
 });

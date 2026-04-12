@@ -3,7 +3,7 @@
 # Updated manually as stories progress
 
 generated: 2026-04-11
-last_updated: 2026-04-12  # Sprint 1 code review done — all stories 1.1-1.7 complete; 2.6 ready-for-dev
+last_updated: 2026-04-12  # Sprint 2a done, Sprint 2b — Stories 2.8, 2.10, 2.11, 2.12, 2.14 ready-for-dev
 project: YieldField
 project_key: YFIELD
 tracking_system: file-system
@@ -34,21 +34,21 @@ development_status:
   # Epic 2 — Data Pipeline Backend (splitté Sprint 2a + Sprint 2b)
   epic-2: in-progress
   # Sprint 2a — Data ingestion & alerts (20 pts)
-  2-1-schemas-zod: review
-  2-2-client-finnhub: review
-  2-3-client-fred: review
-  2-4-client-alpha-vantage: review
-  2-5-script-fetch-data-fallback: review
-  2-6-bootstrap-vix-history: review
-  2-7-script-compute-alert-vix-percentile: review
+  2-1-schemas-zod: done
+  2-2-client-finnhub: done
+  2-3-client-fred: done
+  2-4-client-alpha-vantage: done
+  2-5-script-fetch-data-fallback: done
+  2-6-bootstrap-vix-history: done
+  2-7-script-compute-alert-vix-percentile: done
   # Sprint 2b — AI generation & publishing (19 pts)
-  2-8-client-claude-api: backlog
-  2-9-prompt-v01-chartiste-lettre: backlog
-  2-10-script-generate-ai: backlog
-  2-11-r2-client-pending: backlog
-  2-12-script-publish-r2: backlog
-  2-13-github-actions-daily-pipeline: backlog
-  2-14-script-log-run-github-issue: backlog
+  2-8-client-claude-api: ready-for-dev
+  2-9-prompt-v01-chartiste-lettre: ready-for-dev
+  2-10-script-generate-ai: ready-for-dev
+  2-11-r2-client-pending: ready-for-dev
+  2-12-script-publish-r2: ready-for-dev
+  2-13-github-actions-daily-pipeline: ready-for-dev
+  2-14-script-log-run-github-issue: ready-for-dev
   epic-2-retrospective: optional
 
   # Epic 3 — Core UI (Sprint 3)
