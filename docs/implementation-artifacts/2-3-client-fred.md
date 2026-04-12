@@ -1,6 +1,6 @@
 # Story 2.3 : Client FRED API
 
-Status: ready-for-dev
+Status: review
 Epic: 2 — Data Pipeline Backend
 Sprint: 2a (semaine 2)
 Points: 2
@@ -64,22 +64,22 @@ Author: Claude Sonnet 4.6 via bmad-create-story
 
 ## Tasks / Subtasks
 
-- [ ] **Task 1** — Créer `src/lib/fred.ts` (AC1, AC2, AC3, AC4)
-  - [ ] Constante `FRED_BASE_URL = 'https://api.stlouisfed.org/fred'`
-  - [ ] Classe `FredError` (extends Error, status field)
-  - [ ] Type `FredSeriesResult` (value, change_day, direction, source, timestamp, freshness_level)
-  - [ ] Fonction `fredFetch(seriesId: string)` : fetch + gestion HTTP errors
-  - [ ] Fonction `parseObservations()` : extrait les 2 dernières valeurs non-"."
-  - [ ] Fonction `computeFredFreshness()` : date ISO → freshness_level
-  - [ ] Fonctions exportées `fetchOAT()`, `fetchBund()`, `fetchUS10Y()` (thin wrappers)
+- [x] **Task 1** — Créer `src/lib/fred.ts` (AC1, AC2, AC3, AC4)
+  - [x] Constante `FRED_BASE_URL = 'https://api.stlouisfed.org/fred'`
+  - [x] Classe `FredError` (extends Error, status field)
+  - [x] Type `FredSeriesResult` (value, change_day, direction, source, timestamp, freshness_level)
+  - [x] Fonction `fredFetch(seriesId: string)` : limit=5 + gestion HTTP errors
+  - [x] Fonction `parseObservations()` : filtre "." et valeurs NaN, prend les 2 premières valides
+  - [x] Fonction `computeFredFreshness()` : date ISO → freshness_level
+  - [x] Fonctions exportées `fetchOAT()`, `fetchBund()`, `fetchUS10Y()` (thin wrappers)
 
-- [ ] **Task 2** — Créer les tests Vitest (AC5)
-  - [ ] `src/lib/__tests__/fred.test.ts`
-  - [ ] `pnpm test` ✅
+- [x] **Task 2** — Créer les tests Vitest (AC5)
+  - [x] `src/lib/__tests__/fred.test.ts` — 16 tests
+  - [x] `pnpm test` ✅ 70/70 passing
 
-- [ ] **Task 3** — Git commit (AC6)
+- [x] **Task 3** — Git commit : `feat(story-2.3): add FRED API client (OAT/Bund/US10Y)`
 
-- [ ] **Task 4** — Update story → status review
+- [x] **Task 4** — Update story → status review
 
 ---
 
@@ -283,6 +283,20 @@ Claude Sonnet 4.6 — via bmad-create-story
 
 ### Debug Log References
 
+- Test "throws when all values are '.'" : appelait `fetchUS10Y()` deux fois avec `mockResolvedValueOnce` → 2e appel sans mock → TypeError. Fix : `mockResolvedValue` (sans Once) pour les tests qui font plusieurs appels.
+- Test "HTTP 400 status" : idem, deux appels avec `Once`. Fix : `mockResolvedValue` + catch direct plutôt que double await.
+
 ### Completion Notes List
 
+- `src/lib/fred.ts` : fetchOAT/fetchBund/fetchUS10Y, filtrage "." via `isValidValue()`, `limit=5` pour couvrir les longs weekends, `FredError` custom
+- `timestamp` construit avec `T12:00:00.000Z` pour éviter les décalages fuseau horaire sur dates FRED journalières
+- 16 tests, 70 total passent
+
 ### File List
+
+**Nouveaux fichiers :**
+- `src/lib/fred.ts`
+- `src/lib/__tests__/fred.test.ts`
+
+**Modifiés :**
+- `docs/planning-artifacts/sprint-status.yaml`
