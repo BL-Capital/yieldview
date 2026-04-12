@@ -116,6 +116,7 @@ export async function uploadToR2(points: VixPoint[]): Promise<void> {
 
   try {
     // Dynamic import — @aws-sdk/client-s3 will be formally installed in Story 2.11
+    // @ts-expect-error — optional dependency, not yet in package.json
     const { S3Client, PutObjectCommand } = await import('@aws-sdk/client-s3');
 
     const client = new S3Client({

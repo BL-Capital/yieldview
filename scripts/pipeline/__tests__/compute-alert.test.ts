@@ -37,7 +37,7 @@ function makeHistory(n: number) {
 
 function setupFsMock(points: { date: string; value: number }[]) {
   mockExistsSync.mockReturnValue(true);
-  mockReadFileSync.mockReturnValue(JSON.stringify(points) as unknown as Buffer);
+  mockReadFileSync.mockReturnValue(JSON.stringify(points) as never);
   mockWriteFileSync.mockImplementation(() => undefined);
 }
 
@@ -134,7 +134,7 @@ describe('loadHistory', () => {
 
   it('throws AlertComputeError when file is invalid JSON', () => {
     mockExistsSync.mockReturnValue(true);
-    mockReadFileSync.mockReturnValue('not-json' as unknown as Buffer);
+    mockReadFileSync.mockReturnValue('not-json' as never);
 
     expect(() => loadHistory(VIX_HISTORY_PATH)).toThrow(AlertComputeError);
   });

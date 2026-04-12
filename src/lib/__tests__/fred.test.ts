@@ -223,7 +223,7 @@ describe('error handling', () => {
   it('throws FredError on HTTP 400', async () => {
     mockFetch.mockResolvedValue(makeErrResponse(400, 'Bad Request'));
 
-    const err = await fetchUS10Y().catch((e) => e as FredError);
+    const err = await fetchUS10Y().catch((e) => e) as FredError;
     expect(err).toBeInstanceOf(FredError);
     expect(err.status).toBe(400);
   });

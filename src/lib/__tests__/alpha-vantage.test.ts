@@ -139,7 +139,7 @@ describe('error handling', () => {
   it('throws AlphaVantageError on HTTP 403', async () => {
     mockFetch.mockResolvedValueOnce(makeErrResponse(403, 'Forbidden'));
 
-    const err = await fetchGlobalQuote('IBM').catch((e) => e as AlphaVantageError);
+    const err = await fetchGlobalQuote('IBM').catch((e) => e) as AlphaVantageError;
     expect(err).toBeInstanceOf(AlphaVantageError);
     expect(err.status).toBe(403);
   });
