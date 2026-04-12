@@ -1,8 +1,10 @@
 import { fetchVIX, fetchDXY, fetchIndices } from '../../src/lib/finnhub.js';
 import { fetchOAT, fetchBund, fetchUS10Y } from '../../src/lib/fred.js';
 import { KpiSchema, type Kpi } from '../../src/lib/schemas/kpi.js';
+import { buildAlert } from './compute-alert.js';
 import type { FinnhubQuoteResult, FinnhubIndexResult } from '../../src/lib/finnhub.js';
 import type { FredSeriesResult } from '../../src/lib/fred.js';
+import type { AlertState } from '../../src/lib/schemas/alert.js';
 
 // ─── Error ────────────────────────────────────────────────────────────────────
 
@@ -272,11 +274,35 @@ export async function buildKpis(): Promise<{ kpis: Kpi[]; fetchedAt: string }> {
   return { kpis, fetchedAt };
 }
 
+// ─── Alert state ─────────────────────────────────────────────────────────────
+
+const NEUTRAL_ALERT: AlertState = {
+  active: false,
+  level: null,
+  vix_current: 0,
+  vix_p90_252d: 0,
+  triggered_at: null,
+};
+
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
 async function main() {
-  const result = await buildKpis();
-  process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+  const { kpis, fetchedAt } = await buildKpis();
+
+  // Reuse the VIX value already fetched by buildKpis() — no second API call
+  const vixKpi = kpis.find((k) => k.id === 'vix');
+  let alert: AlertState = NEUTRAL_ALERT;
+
+  if (vixKpi) {
+    try {
+      alert = await buildAlert(vixKpi.value);
+    } catch (err) {
+      log('warn', 'compute-alert skipped — vix history unavailable', { error: String(err) });
+      alert = { ...NEUTRAL_ALERT, vix_current: vixKpi.value };
+    }
+  }
+
+  process.stdout.write(JSON.stringify({ kpis, fetchedAt, alert }, null, 2) + '\n');
 }
 
 // Only run when executed directly (not when imported by tests or other modules)

@@ -40,7 +40,7 @@ development_status:
   2-4-client-alpha-vantage: review
   2-5-script-fetch-data-fallback: review
   2-6-bootstrap-vix-history: review
-  2-7-script-compute-alert-vix-percentile: ready-for-dev
+  2-7-script-compute-alert-vix-percentile: review
   # Sprint 2b — AI generation & publishing (19 pts)
   2-8-client-claude-api: backlog
   2-9-prompt-v01-chartiste-lettre: backlog
