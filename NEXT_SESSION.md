@@ -1,104 +1,98 @@
-# NEXT_SESSION — YieldField Sprint 4 : Rive Avatar & Coulisses
+# NEXT_SESSION — YieldField Sprint 6 : Quality, Accessibility, Performance
 
 **Derniere mise a jour :** 2026-04-12
-**Phase BMAD :** Phase 4 Implementation — **Sprint 4 a demarrer**
+**Phase BMAD :** Phase 4 Implementation — **Sprint 6 a demarrer**
 
 ---
 
 ## TL;DR (30 secondes)
 
-- **Epic 1+2+3** DONE — 35/35 stories, 93 pts, 224 tests, pushed `main`
-- **Sprint 3** review + security DONE (commit `c3ed47e`, Issue #7 Bryan)
-- **Sprint 4** : Rive Avatar & Coulisses Page — **28 pts (23 P0 + 5 P1)**
-- **Workflow habituel** : creer stories → dev batch → code review → security audit → commit + push + issue Bryan
+- **Epic 1+2+3+4+5** DONE — 55 stories, 149 pts, 349 tests, pushed `main`
+- **Sprint 6** = Epic 6 : Lighthouse CI, bundle analyzer, a11y audit, 404/500, analytics, e2e
+- **Commit HEAD** : `38b2ddf` (Sprint 5 livre)
+- **Issue GitHub** : #9 ouverte pour Bryan (Sprint 5 delivery)
+- Attendre retours Bryan sur Sprint 5 avant de demarrer Sprint 6
 
 ---
 
 ## Etat du projet
 
-| Epic | Stories | Points | Status |
-|------|---------|--------|--------|
-| Epic 1 — Foundation | 7/7 | 18 | DONE |
-| Epic 2 — Data Pipeline | 14/14 | 39 | DONE |
-| Epic 3 — Core UI Dashboard | 14/14 | 36 | DONE (reviewed + secured) |
-| **Epic 4 ��� Rive Avatar & Coulisses** | **0/11** | **28** | **A FAIRE** |
-
-**Tests** : 224 passing | **Build** : 166 kB | **Security** : 4/4 gates PASS
-
----
-
-## Sprint 4 — Scope (28 pts)
-
-### Stories P0 (23 pts — obligatoires)
-
-| Story | Titre | Pts | Description |
-|-------|-------|-----|-------------|
-| 4.1 | Lottie icons library | 2 | `@dotlottie/react-player`, 5 animations, `LottieIcon` wrapper |
-| 4.2 | Rive avatar fallback SVG + setup | 3 | `@rive-app/react-canvas`, 4 SVG variants (low/medium/high/crisis), `HeroAvatar` |
-| 4.4 | Aceternity Tracing Beam | 3 | Scroll-following beam, reduced-motion respect |
-| 4.5 | Magic UI Dot Pattern | 1 | Background Coulisses page |
-| 4.6 | Aceternity Code Block Animated | 3 | Syntax highlighting, copy button + ShineBorder |
-| 4.7 | Magic UI Shine Border | 1 | Boutons interactifs |
-| 4.8 | TimelineStep + PromptCodeBlock | 3 | Timeline composant + wrapper prompt diffs |
-| 4.9 | PipelineLogsTable | 3 | Table shadcn, fetch R2 `runs-last-7.json` |
-| 4.10 | Content Coulisses MDX (5+ etapes) | 3 | Idee → BMAD → Pipeline → Prompts v01-v06 → Cloudflare |
-| 4.11 | page.tsx Coulisses | 1 | `/[locale]/coulisses` server component, assemblage |
-
-### Story P1 (5 pts — optionnelle, peut aller en V1.1)
-
-| Story | Titre | Pts | Description |
-|-------|-------|-----|-------------|
-| 4.3 | Rive avatar.riv asset | 5 | Fichier .riv < 120 KB, state machine risk levels |
-
-### Risques Sprint 4
-- **R1** : Creation Rive asset longue → SVG fallback suffit pour MVP
-- **R2** : Tracing Beam complexe avec scroll → fallback timeline statique
-
-### Definition of Done
-- [ ] Page Coulisses rendue avec 5+ etapes + Tracing Beam
-- [ ] Prompts v01-v06 dans CodeBlocks avec bouton copy
-- [ ] Pipeline logs table depuis R2
-- [ ] LottieIcons sur fleches KPI
-- [ ] Rive avatar OU fallback SVG actif
+| Epic | Statut | Stories | Points | Commit |
+|------|--------|---------|--------|--------|
+| 1 Foundation | DONE | 7/7 | 18 | — |
+| 2 Data Pipeline | DONE | 14/14 | 39 | — |
+| 3 Core UI Dashboard | DONE | 14/14 | 36 | `c3ed47e` |
+| 4 Rive Avatar & Coulisses | DONE | 10/10 | 28 | `b4dbe95` |
+| 5 Alert Banner, Newsletter | DONE | 10/10 | 28 | `38b2ddf` |
+| **6 Quality, A11y, Perf** | **A FAIRE** | 0/7 | 16 | — |
 
 ---
 
-## Deferred de Sprint 3 (a integrer dans Sprint 4)
+## Sprint 6 — Epic 6 : Quality, Accessibility, Performance
 
-- **AA-02** : `Intl.NumberFormat` pour formatage locale des KPIs (FR: `7 535,23`)
-- **BH-15** : Secondary KPIs depuis R2 au lieu de `STATIC_SECONDARY_KPIS`
+**Objectif** : Lighthouse CI, bundle analyzer, a11y audit, 404/500 pages, analytics, e2e.
+**FRs** : FR50-54
+**NFRs** : NFR1-6, NFR15-17, NFR22-23
 
----
+### Stories Sprint 6
 
-## Fichiers de reference
-
-- Sprint plan : `docs/planning-artifacts/sprint-plan.md` (lignes 182-216)
-- Epics detail : `docs/planning-artifacts/epics.md` (section Epic 4, ligne 364+)
-- Story specs : a creer dans `docs/implementation-artifacts/`
-
----
-
-## Consignes pour la prochaine session
-
-1. **Lire ce fichier** (`NEXT_SESSION.md`) pour reprendre le contexte
-2. **Creer les 11 story specs** dans `docs/implementation-artifacts/` (format habituel : Story/AC/Dev Notes/Dev Agent Record)
-3. **Dev batch** toutes les stories P0 d'abord (23 pts), puis P1 si le temps
-4. **A la fin du sprint** : code review (`bmad-code-review`) → security audit (`yieldfield-security-audit`) → commit + push + issue GitHub Bryan
-5. **Nouvelles deps a installer** : `@dotlottie/react-player`, `@rive-app/react-canvas`
-6. **Nouvelle page** : `src/app/[locale]/coulisses/page.tsx`
-7. **Ne pas oublier** les 2 deferred Sprint 3 (Intl.NumberFormat + secondary KPIs R2)
+| # | Story | Pts | Priorite |
+|---|-------|-----|----------|
+| 6.1 | Lighthouse CI config + gates | 3 | P0 |
+| 6.2 | Bundle analyzer + optimisations | 3 | P0 |
+| 6.3 | Accessibility audit (Axe + zoom 200%) | 3 | P0 |
+| 6.4 | 404 + 500 pages editoriales | 2 | P0 |
+| 6.5 | Cloudflare Web Analytics integration | 1 | P0 |
+| 6.6 | UptimeRobot setup | 1 | P0 |
+| 6.7 | Tests e2e Playwright | 3 | P1 |
 
 ---
 
-## Prompt de reprise ultra-court
+## Workflow Sprint
 
-```
-Reprise YieldField. Epic 1+2+3 done (35 stories, 93 pts, 224 tests).
-Sprint 4 a demarrer : Rive Avatar & Coulisses (28 pts, 11 stories).
-On fait comme d'habitude : creer stories → dev batch → review + secu a la fin.
-Lire NEXT_SESSION.md.
-```
+1. Lire `docs/planning-artifacts/epics.md` — section Epic 6
+2. Creer les story specs (`bmad-create-story`) pour chaque story P0
+3. Dev batch sequentiel
+4. Code review (`bmad-code-review`) — Blind + Edge + Auditor
+5. Security audit (`yieldfield-security-audit`) — 4 gates
+6. Commit + push + Issue #10 pour Bryan
 
 ---
 
-*Fichier mis a jour par Claude Opus 4.6 — 2026-04-12*
+## Points d'attention Sprint 6
+
+- **Story 6.1** : Lighthouse CI — verifier compat Cloudflare Pages (pas Vercel)
+- **Story 6.2** : Budget bundle < 280 KB gz — verifier lazy-loading Rive, Lottie, Aceternity
+- **Story 6.3** : Axe DevTools — tester homepage + coulisses + newsletter form
+- **Story 6.4** : 404/500 pages — Background Boxes (Aceternity) + Lottie + bouton retour
+
+---
+
+## Deferred items
+
+- Story 4.3 (Rive .riv asset) → V1.1
+- `@cloudflare/workers-types` → Epic 7
+- `next.config.ts` output strategy → Epic 7
+- `next/font/google` reseau au build → Epic 7
+
+---
+
+## Bryan (SupraPirox)
+
+- Issue #9 ouverte — attendre retours Sprint 5
+- NE PAS relancer Bryan sur les issues en attente
+
+---
+
+## Rappels techniques
+
+- pnpm : `/c/Program Files/nodejs/node_modules/corepack/shims/pnpm.cmd`
+- Motion 12 : `motion/react` (PAS `framer-motion`)
+- React 19 compatible obligatoire
+- `prefers-reduced-motion` sur TOUTES les animations
+- next-intl pour i18n (FR/EN)
+- `Intl.NumberFormat` pour formatage locale-aware
+- `@lottiefiles/dotlottie-react` (PAS `@dotlottie/react-player`)
+- highlight.js pour syntax highlighting
+- shadcn/ui Table deja installe
+- `@vercel/og` pour OG image generation (Edge Runtime)
