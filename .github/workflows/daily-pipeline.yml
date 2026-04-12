@@ -1,0 +1,67 @@
+name: Daily Pipeline
+
+on:
+  schedule:
+    - cron: '0 6 * * *'   # 6h UTC every day
+  workflow_dispatch:        # Manual trigger for testing
+
+jobs:
+  pipeline:
+    name: Fetch → Generate → Publish
+    runs-on: ubuntu-latest
+    # DISABLED until Sprint 2b — remove this condition in Story 2.13
+    if: false
+
+    # Secrets to configure in GitHub Settings > Secrets and variables > Actions:
+    # - ANTHROPIC_API_KEY    (Story 2.8 — Claude API client)
+    # - FINNHUB_API_KEY      (Story 2.2 — Finnhub client)
+    # - FRED_API_KEY         (Story 2.3 — FRED client)
+    # - ALPHA_VANTAGE_API_KEY (Story 2.4 — Alpha Vantage client)
+    # - R2_ACCESS_KEY_ID     (Story 2.11 — R2 client)
+    # - R2_SECRET_ACCESS_KEY (Story 2.11 — R2 client)
+    # - BUTTONDOWN_API_KEY   (Story 5.10 — newsletter pipeline)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # TODO Story 2.5 — Fetch market data (Finnhub + FRED + Alpha Vantage)
+      # - name: Fetch data
+      #   run: pnpm tsx scripts/fetch-data.ts
+      #   env:
+      #     FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      #     FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+      #     ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
+
+      # TODO Story 2.10 — Generate AI briefing (Claude API)
+      # - name: Generate AI briefing
+      #   run: pnpm tsx scripts/generate-ai.ts
+      #   env:
+      #     ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+      # TODO Story 2.12 — Publish to Cloudflare R2
+      # - name: Publish to R2
+      #   run: pnpm tsx scripts/publish-r2.ts
+      #   env:
+      #     R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      #     R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+
+      # TODO Story 2.14 — Log run result to GitHub Issues
+      # - name: Log run
+      #   run: pnpm tsx scripts/log-run.ts
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
