@@ -88,7 +88,8 @@ export interface SecondaryKpi {
   unit?: string
 }
 
-export const MOCK_SECONDARY_KPIS: SecondaryKpi[] = [
+// TODO(sprint-4): replace with secondary_kpis from R2 analysis data
+export const STATIC_SECONDARY_KPIS: SecondaryKpi[] = [
   { label: 'DAX', value: 18234, change: 0.34, unit: 'pts' },
   { label: 'Nasdaq', value: 17890, change: -0.55, unit: 'pts' },
   { label: 'FTSE 100', value: 8123, change: 0.12, unit: 'pts' },

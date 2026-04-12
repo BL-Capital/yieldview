@@ -258,4 +258,16 @@
   .animate-aurora-blob-3 {
     animation: none;
   }
+  /* Pulse Ring — static under reduced-motion */
+  @keyframes pulse-ring {
+    0%, 100% { transform: none; opacity: var(--pulse-max, 0.6); }
+  }
+  /* Marquee — static */
+  @keyframes marquee {
+    0%, 100% { transform: none; }
+  }
+  /* Gradient shimmer — static */
+  @keyframes gradient-shimmer {
+    0%, 100% { background-position: 0 center; }
+  }
 }

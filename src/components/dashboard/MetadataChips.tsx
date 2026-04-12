@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-type AlertLevel = 'calm' | 'warning' | 'alert' | 'crisis' | null
+type AlertLevel = 'low' | 'warning' | 'alert' | 'crisis' | null
 
 interface MetadataChipsProps {
   publishedAt: string
@@ -10,7 +10,7 @@ interface MetadataChipsProps {
 }
 
 const alertConfig: Record<string, { label: { fr: string; en: string }; className: string }> = {
-  calm: {
+  low: {
     label: { fr: 'Marché calme', en: 'Calm market' },
     className: 'bg-bull/20 text-bull border-bull/40',
   },
@@ -29,7 +29,9 @@ const alertConfig: Record<string, { label: { fr: string; en: string }; className
 }
 
 function formatDate(isoDate: string, locale: string): string {
-  return new Date(isoDate).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB', {
+  const date = new Date(isoDate)
+  if (Number.isNaN(date.getTime())) return '—'
+  return date.toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',

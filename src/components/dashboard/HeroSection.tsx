@@ -8,7 +8,7 @@ import { BriefingPanel } from './BriefingPanel'
 import { FreshnessIndicator } from './FreshnessIndicator'
 import { KpiBentoGrid } from './KpiBentoGrid'
 import { SecondaryKpisMarquee } from './SecondaryKpisMarquee'
-import { MOCK_SECONDARY_KPIS } from '@/data/mock-kpis'
+import { STATIC_SECONDARY_KPIS } from '@/data/mock-kpis'
 
 interface HeroSectionProps {
   analysis: Analysis
@@ -65,8 +65,8 @@ export function HeroSection({ analysis, locale }: HeroSectionProps) {
           readingTimeMin={3}
           alertLevel={
             analysis.alert.active && analysis.alert.level
-              ? (analysis.alert.level as 'calm' | 'warning' | 'alert' | 'crisis')
-              : 'calm'
+              ? analysis.alert.level
+              : 'low'
           }
           locale={locale}
         />
@@ -93,7 +93,7 @@ export function HeroSection({ analysis, locale }: HeroSectionProps) {
         </div>
 
         {/* 7. Secondary KPIs Marquee */}
-        <SecondaryKpisMarquee kpis={MOCK_SECONDARY_KPIS} />
+        <SecondaryKpisMarquee kpis={STATIC_SECONDARY_KPIS} />
 
         {/* 8. CTA Coulisses */}
         <a

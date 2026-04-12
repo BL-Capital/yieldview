@@ -10,7 +10,6 @@ export function AnimatedGradientText({ children, className }: AnimatedGradientTe
     <span
       className={cn(
         'inline-block bg-clip-text text-transparent',
-        'animate-aurora-pulse',
         className,
       )}
       style={{

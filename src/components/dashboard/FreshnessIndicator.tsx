@@ -21,7 +21,9 @@ const dotColors: Record<FreshnessLevel, string> = {
 }
 
 function getMinutesAgo(isoDate: string): number {
-  return Math.floor((Date.now() - new Date(isoDate).getTime()) / 60_000)
+  const ms = new Date(isoDate).getTime()
+  if (Number.isNaN(ms)) return 0
+  return Math.max(0, Math.floor((Date.now() - ms) / 60_000))
 }
 
 function formatAgo(minutes: number, locale: string): string {

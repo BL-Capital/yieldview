@@ -84,7 +84,6 @@ export function RiskIndicator({ alertLevel, locale = 'fr' }: RiskIndicatorProps)
               'absolute rounded-full border-2',
               cfg.animClass,
               cfg.glow,
-              'motion-safe:' + cfg.animClass,
             )}
             style={{
               width: size,

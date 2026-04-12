@@ -62,7 +62,7 @@ describe('MetadataChips', () => {
       <MetadataChips
         publishedAt="2026-04-12T06:30:00.000Z"
         readingTimeMin={3}
-        alertLevel="calm"
+        alertLevel="low"
         locale="en"
       />,
     )
