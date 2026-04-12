@@ -124,6 +124,9 @@ async function main(): Promise<void> {
   log('info', 'bootstrap-vix start (FRED VIXCLS)', {});
 
   const raw = await fetchVixHistory();
+  if (raw.length === 0) {
+    throw new BootstrapError('No valid VIX observations after parsing — aborting to protect existing history');
+  }
   log('info', 'FRED observations fetched', { count: raw.length });
 
   const points = deduplicateAndSort(raw);

@@ -25,7 +25,7 @@ export interface PipelineRunResult {
 // ─── gh CLI wrapper ───────────────────────────────────────────────────────────
 
 async function gh(args: string[]): Promise<string> {
-  const { stdout } = await execFileAsync('gh', args);
+  const { stdout } = await execFileAsync('gh', args, { timeout: 15_000 });
   return stdout.trim();
 }
 
@@ -55,7 +55,7 @@ function formatRow(date: string, result: PipelineRunResult): string {
   const kpis = result.kpiCount ?? '-';
   const alert = result.alertLevel ?? 'none';
   const duration = result.durationMs ? `${(result.durationMs / 1000).toFixed(1)}s` : '-';
-  const error = result.error ? result.error.slice(0, 60) : '-';
+  const error = result.error ? result.error.slice(0, 60).replace(/\|/g, '\\|') : '-';
   return `| ${date} | ${status} | ${kpis} | ${alert} | ${duration} | ${error} |`;
 }
 
@@ -99,9 +99,10 @@ export async function logPipelineRun(result: PipelineRunResult): Promise<void> {
 // ─── Standalone entry point ───────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  const statusArg = process.argv.find((a) => a.startsWith('--status='))?.split('=')[1]
-    ?? process.argv[process.argv.indexOf('--status') + 1]
-    ?? 'success';
+  const eqForm = process.argv.find((a) => a.startsWith('--status='))?.split('=')[1];
+  const flagIdx = process.argv.indexOf('--status');
+  const spaceForm = flagIdx !== -1 ? process.argv[flagIdx + 1] : undefined;
+  const statusArg = eqForm ?? spaceForm ?? 'success';
 
   const result: PipelineRunResult = {
     status: statusArg === 'failure' ? 'failure' : 'success',

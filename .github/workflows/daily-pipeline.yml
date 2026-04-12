@@ -5,6 +5,17 @@ on:
     - cron: '0 7 * * 1-5'   # 7h UTC = 8h/9h Paris, weekdays only
   workflow_dispatch:          # Manual trigger for testing
 
+# Secrets required in GitHub Settings > Secrets and variables > Actions:
+# - FINNHUB_API_KEY      (Finnhub market data)
+# - FRED_API_KEY         (FRED sovereign rates + VIX history)
+# - ALPHA_VANTAGE_API_KEY (Alpha Vantage, marginal)
+# - ANTHROPIC_API_KEY    (Claude API for AI briefing)
+# - R2_ACCESS_KEY_ID     (Cloudflare R2 storage)
+# - R2_SECRET_ACCESS_KEY (Cloudflare R2 storage)
+# - R2_BUCKET_NAME       (Cloudflare R2 bucket)
+# - R2_ENDPOINT          (Cloudflare R2 S3-compatible endpoint)
+# - R2_PUBLIC_URL         (R2 public CDN URL for fallback reads)
+
 jobs:
   pipeline:
     name: Fetch → Generate → Publish
@@ -26,8 +37,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Fetch market data
-        run: pnpm tsx scripts/pipeline/fetch-data.ts > /tmp/kpis.json
+      - name: Fetch market data + compute alert
+        run: pnpm tsx scripts/pipeline/fetch-data.ts > /tmp/pipeline-data.json
         env:
           FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
@@ -35,13 +46,9 @@ jobs:
           R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
 
       - name: Generate AI briefing
-        run: pnpm tsx scripts/pipeline/generate-ai.ts > /tmp/analysis.json
+        run: cat /tmp/pipeline-data.json | pnpm tsx scripts/pipeline/generate-ai.ts > /tmp/analysis.json
         env:
-          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
-          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
-          ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
 
       - name: Publish to R2
         run: cat /tmp/analysis.json | pnpm tsx scripts/pipeline/publish-r2.ts

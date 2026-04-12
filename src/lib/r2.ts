@@ -62,14 +62,18 @@ export async function uploadJSON(key: string, data: unknown): Promise<void> {
 
   log('info', 'R2 upload start', { key, bucket });
 
-  await client.send(
-    new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: JSON.stringify(data, null, 2),
-      ContentType: 'application/json',
-    }),
-  );
+  try {
+    await client.send(
+      new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+        Body: JSON.stringify(data, null, 2),
+        ContentType: 'application/json',
+      }),
+    );
+  } catch (err) {
+    throw new R2Error(`R2 upload failed for key "${key}": ${(err as Error).message}`);
+  }
 
   log('info', 'R2 upload complete', { key });
 }
@@ -80,19 +84,32 @@ export async function downloadJSON<T>(key: string): Promise<T> {
 
   log('info', 'R2 download start', { key, bucket });
 
-  const response = await client.send(
-    new GetObjectCommand({
-      Bucket: bucket,
-      Key: key,
-    }),
-  );
+  let body: string | undefined;
+  try {
+    const response = await client.send(
+      new GetObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      }),
+    );
+    body = await response.Body?.transformToString('utf-8');
+  } catch (err) {
+    const code = (err as { name?: string }).name;
+    if (code === 'NoSuchKey') {
+      throw new R2Error(`R2 key not found: "${key}"`);
+    }
+    throw new R2Error(`R2 download failed for key "${key}": ${(err as Error).message}`);
+  }
 
-  const body = await response.Body?.transformToString('utf-8');
   if (!body) {
     throw new R2Error(`R2 download returned empty body for key: ${key}`);
   }
 
   log('info', 'R2 download complete', { key });
 
-  return JSON.parse(body) as T;
+  try {
+    return JSON.parse(body) as T;
+  } catch {
+    throw new R2Error(`R2 download returned invalid JSON for key: ${key}`);
+  }
 }

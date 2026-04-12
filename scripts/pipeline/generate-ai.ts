@@ -187,9 +187,10 @@ export async function generateAnalysis(kpis: Kpi[], alert: AlertState): Promise<
   const haiku = await callHaiku(opus);
 
   // Step 3: Assemble full Analysis object
+  const now = new Date();
   const analysis: Analysis = {
-    date: new Date().toISOString().slice(0, 10),
-    generated_at: new Date().toISOString(),
+    date: now.toISOString().slice(0, 10),
+    generated_at: now.toISOString(),
     validated_at: null,
     pipeline_run_id: crypto.randomUUID(),
     version: 'ai',
@@ -222,26 +223,32 @@ export async function generateAnalysis(kpis: Kpi[], alert: AlertState): Promise<
   return validated;
 }
 
+// ─── Stdin reader ─────────────────────────────────────────────────────────────
+
+async function readStdin(): Promise<string> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of process.stdin) {
+    chunks.push(chunk as Buffer);
+  }
+  return Buffer.concat(chunks).toString('utf-8');
+}
+
 // ─── Standalone entry point ───────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  // Import pipeline functions dynamically to avoid circular deps at module level
-  const { buildKpis } = await import('./fetch-data.js');
-  const { buildAlert } = await import('./compute-alert.js');
-
   const start = Date.now();
-  const { kpis } = await buildKpis();
 
-  // Get VIX for alert computation
-  const vixKpi = kpis.find((k) => k.id === 'vix');
-  let alert: AlertState = { active: false, level: null, vix_current: 0, vix_p90_252d: 0, triggered_at: null };
-  if (vixKpi) {
-    try {
-      alert = await buildAlert(vixKpi.value);
-    } catch (err) {
-      log('warn', 'buildAlert skipped', { error: String(err) });
-      alert = { ...alert, vix_current: vixKpi.value };
-    }
+  // Read fetch-data.ts output from stdin (piped in the workflow)
+  const raw = await readStdin();
+  if (!raw.trim()) {
+    throw new GenerateError('No input on stdin — pipe fetch-data.ts output to this script');
+  }
+
+  const pipelineData = JSON.parse(raw) as { kpis: Kpi[]; fetchedAt: string; alert: AlertState };
+  const { kpis, alert } = pipelineData;
+
+  if (kpis.length === 0) {
+    throw new GenerateError('Cannot generate: no KPIs available');
   }
 
   const analysis = await generateAnalysis(kpis, alert);

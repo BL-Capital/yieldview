@@ -7,8 +7,8 @@ const mockSend = vi.fn();
 vi.mock('@aws-sdk/client-s3', () => {
   function MockS3Client() { return { send: mockSend }; }
   MockS3Client.prototype = {};
-  function MockPutObjectCommand(input: Record<string, unknown>) { Object.assign(this, input); }
-  function MockGetObjectCommand(input: Record<string, unknown>) { Object.assign(this, input); }
+  function MockPutObjectCommand(this: Record<string, unknown>, input: Record<string, unknown>) { Object.assign(this, input); }
+  function MockGetObjectCommand(this: Record<string, unknown>, input: Record<string, unknown>) { Object.assign(this, input); }
   return {
     S3Client: MockS3Client,
     PutObjectCommand: MockPutObjectCommand,

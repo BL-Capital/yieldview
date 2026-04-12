@@ -44,7 +44,7 @@ export function buildUserPrompt(kpis: Kpi[], alert: AlertState): string {
   const spreadBlock = formatSpreadAnalysis(kpis);
 
   const alertBlock = alert.active
-    ? `ALERTE ACTIVE — Niveau : ${alert.level!.toUpperCase()}
+    ? `ALERTE ACTIVE — Niveau : ${(alert.level ?? 'UNKNOWN').toUpperCase()}
 VIX actuel : ${alert.vix_current} | Seuil P90 (252j) : ${alert.vix_p90_252d}
 Declenchee a : ${alert.triggered_at}`
     : `Aucune alerte active. VIX actuel : ${alert.vix_current} (sous le seuil P90 de ${alert.vix_p90_252d}).`;
