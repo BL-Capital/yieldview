@@ -146,6 +146,9 @@ vite.config.ts.timestamp-*
 _bmad/*/cache/
 _bmad/*/state/
 
+# Pipeline data — generated at runtime, not versioned
+data/vix-history.json
+
 # Next.js / Story 1.1 additions
 next-env.d.ts
 /build
