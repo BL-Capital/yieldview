@@ -113,26 +113,34 @@ export function HeroSection({ analysis, locale, secondaryKpis }: HeroSectionProp
           locale={locale}
         />
 
-        {/* 6. KPI Bento Grid */}
+        {/* 6. Secondary KPIs Marquee — bandeau défilant avant les gros KPIs */}
+        <SecondaryKpisMarquee kpis={secondaryKpis} />
+
+        {/* 7. KPI Bento Grid */}
         <div className="w-full max-w-5xl">
           <KpiBentoGrid kpis={analysis.kpis} locale={locale} />
         </div>
 
-        {/* 7. Secondary KPIs Marquee */}
-        <SecondaryKpisMarquee kpis={secondaryKpis} />
-
-        {/* 8. CTA Coulisses */}
-        <a
-          href={`/${locale}/coulisses`}
-          className={cn(
-            'mt-4 inline-flex items-center gap-2',
-            'rounded-full border border-yield-gold px-6 py-2.5',
-            'text-sm font-mono text-yield-gold',
-            'transition-colors hover:bg-yield-gold/10',
-          )}
-        >
-          {locale === 'fr' ? 'Voir les Coulisses' : 'Behind the Scenes'} →
-        </a>
+        {/* 8. CTA Coulisses — heartbeat pulse "les coulisses c'est la vie du site" */}
+        <div className="relative mt-4">
+          {/* Heartbeat rings — strong glow */}
+          <span className="absolute -inset-3 rounded-full border-2 border-yield-gold/60 animate-[heartbeat_1.8s_ease-in-out_infinite] shadow-[0_0_15px_rgba(201,168,76,0.4)] motion-reduce:animate-none" />
+          <span className="absolute -inset-5 rounded-full border border-yield-gold/30 animate-[heartbeat_1.8s_ease-in-out_0.3s_infinite] shadow-[0_0_25px_rgba(201,168,76,0.2)] motion-reduce:animate-none" />
+          <a
+            href={`/${locale}/coulisses`}
+            className={cn(
+              'relative inline-flex items-center gap-3',
+              'rounded-full border-2 border-yield-gold px-8 py-3',
+              'text-base font-mono text-yield-gold',
+              'shadow-[0_0_20px_rgba(201,168,76,0.25)]',
+              'transition-all hover:bg-yield-gold/10 hover:scale-105',
+              'hover:shadow-[0_0_30px_rgba(201,168,76,0.5)]',
+            )}
+          >
+            <span className="inline-block w-3 h-3 rounded-full bg-yield-gold shadow-[0_0_8px_rgba(201,168,76,0.8)] animate-[pulse-dot_1.8s_ease-in-out_infinite] motion-reduce:animate-none" />
+            {locale === 'fr' ? 'Voir les Coulisses' : 'Behind the Scenes'}
+          </a>
+        </div>
       </div>
     </AuroraWithBeams>
   )
