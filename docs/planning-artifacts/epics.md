@@ -698,3 +698,58 @@ inputDocuments:
 - [ ] Liste les 6 livrables BMAD v6.3.0 avec liens (Product Brief, PRD, Architecture, UX Design, Component Catalog, Sprint Plan)
 - [ ] Assignée à SupraPirox (Bryan)
 - [ ] Bryan valide ou commente dans les 48h
+
+## Epic 8 — Polish UX post-recette Bryan
+
+**Objectif :** Traiter les 5 retours concrets de la recette globale V1 (issues #12 et #8). Amélioration esthétique, dynamisme des KPIs et réduction des animations trop intrusives.
+
+**Owner :** Emmanuel (dev) — retours fonctionnels Bryan
+**Priorité :** P1 — post-lancement, avant hard launch public
+**Points totaux :** 8
+
+---
+
+### Story 8.1 — Logo : refonte ou suppression (P1)
+**Points :** 2
+**Acceptance criteria :**
+- [ ] Le logo actuel est évalué : trop générique / peu adapté à l'identité éditoriale
+- [ ] Option A : nouveau logo vectoriel SVG cohérent avec palette `#0A1628` + `#C9A84C` + Instrument Serif
+- [ ] Option B : suppression du logo, remplacement par wordmark typographique "YieldField" en Instrument Serif
+- [ ] Décision documentée et validée visuellement
+- [ ] Aucune régression Lighthouse, build clean
+
+### Story 8.2 — KPIs dynamiques : highlight valeurs significatives du jour (P1)
+**Points :** 2
+**Acceptance criteria :**
+- [ ] Chaque jour, les KPIs avec la variation absolue ou relative la plus forte sont mis en avant visuellement (badge, couleur, taille)
+- [ ] L'algorithme de sélection est documenté (ex. top 3 mouvements absolus en %)
+- [ ] Le highlight est généré côté pipeline (publish-r2.ts) ou côté rendu (KpiCard)
+- [ ] En cas de données manquantes, fallback gracieux sans highlight
+- [ ] Tests unitaires couvrant la logique de sélection
+
+### Story 8.3 — Animation CTA : remplacer par hover teinte simple (P1)
+**Points :** 1
+**Acceptance criteria :**
+- [ ] L'animation actuelle du bouton CTA (jugée trop agitée) est remplacée
+- [ ] Nouveau comportement : hover déclenche uniquement un changement de teinte (transition couleur smooth, 200-300ms)
+- [ ] Aucune animation continue (pulse, bounce, shimmer) sur le CTA au repos
+- [ ] Conforme aux tokens de couleur existants (`#C9A84C` or, variantes)
+- [ ] Testé sur desktop et mobile
+
+### Story 8.4 — Marquee : repositionnement plus haut dans la page (P1)
+**Points :** 1
+**Acceptance criteria :**
+- [ ] Le bandeau défilant (secondary KPIs marquee) est remonté dans la hiérarchie visuelle de la homepage
+- [ ] Position cible : entre le Hero et les KPI cards principales (ou selon validation Bryan)
+- [ ] Le repositionnement n'introduit pas de CLS (Cumulative Layout Shift)
+- [ ] Rendu correct sur mobile, tablette et desktop
+- [ ] Lighthouse Performance ≥ 0.9 maintenu
+
+### Story 8.5 — Homepage UI polish esthétique (P1)
+**Points :** 2
+**Acceptance criteria :**
+- [ ] L'élément signalé par Bryan dans l'issue #8 est identifié précisément (screenshot analysé)
+- [ ] Refondu visuellement en cohérence avec la charte (`#0A1628`, `#C9A84C`, Instrument Serif, style Monocle × Linear)
+- [ ] Proposition validée par Bryan avant merge (screenshot commenté dans l'issue #8)
+- [ ] Aucune régression sur les autres sections de la homepage
+- [ ] Build et typecheck clean

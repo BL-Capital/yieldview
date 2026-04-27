@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-13
-last_updated: 2026-04-13
+last_updated: 2026-04-27
 project: YieldField
 project_key: NOKEY
 tracking_system: file-system
@@ -138,3 +138,12 @@ development_status:
   7-5-interviews-marc: ready-for-dev
   7-6-issue-validation-globale: done
   epic-7-retrospective: optional
+
+  # ── Epic 8 : Polish UX post-recette Bryan ────────────────────────────────
+  epic-8: in-progress
+  8-1-logo-refonte-suppression: ready-for-dev
+  8-2-kpis-dynamiques-highlight: ready-for-dev
+  8-3-animation-cta-hover: ready-for-dev
+  8-4-marquee-repositionnement: ready-for-dev
+  8-5-homepage-ui-polish: ready-for-dev
+  epic-8-retrospective: optional
